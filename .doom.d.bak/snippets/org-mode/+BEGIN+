@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: BEGIN
+# key: beg
+# --
+#+BEGIN_${1: ENV}
+$0
+#+END_$1

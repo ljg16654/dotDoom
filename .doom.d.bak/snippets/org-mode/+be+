@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: be
+# key: be
+# --
+#+BEGIN_${1:environment} $2
+$0
+#+END_$1

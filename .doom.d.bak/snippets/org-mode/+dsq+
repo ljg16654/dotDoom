@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: secondOrderDifferential
+# key: d2
+# --
+\frac{\mathrm d^2 $1}{\mathrm d $2 ^2}$0
