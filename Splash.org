@@ -1,0 +1,9 @@
+#+startup: inlineimages
+
+[[./logo.svg]]
+*GNU Emacs* version 26.3
+
+
+
+              /GNU Emacs comes with ABSOLUTELY NO WARRANTY/
+           /Copyright (C) 2019 Free Software Foundation, Inc./

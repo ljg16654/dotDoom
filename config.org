@@ -1,0 +1,348 @@
+#+TITLE: config
+#+PROPERTY: header-args :tangle config.el
+* personal info
+#+begin_src emacs-lisp
+(setq user-full-name "Jigang Li"
+      user-mail-address "ljg16654@sjtu.edu.cn"
+)
+#+end_src
+
+* font
+Doom exposes five (optional) variables for controlling fonts in Doom. Here
+are the three important ones:
++ `doom-font'
++ `doom-variable-pitch-font'
++ `doom-big-font' -- used for `doom-big-font-mode'; use this for
+  presentations or streaming.
+
+They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
+font string. You generally only need these two:
+#+begin_src  emacs-lisp :tangle nil
+(setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
+       doom-variable-pitch-font (font-spec :family "sans" :size 13))
+#+end_src
+
+The currently preferred monospace fonts are
++ monospace
++ Fira mono
++ iconsolata
+#+begin_src emacs-lisp
+(setq doom-font (font-spec :family "Monaco for Powerline" :size 40 :weight 'light)
+      doom-variable-pitch-font (font-spec :family "Sans Serif" :size 40)
+      )
+(setq-default line-spacing 0.3)
+#+end_src
+
+For mixed font to be activated, =mixed-pitch-mode= should be activated. However, the current version doesn't support change of height of fixed-pitch font.
+[[https://gitlab.com/jabranham/mixed-pitch/-/issues/6][related issue]]
+The author provided a patch to disable fixed height of /fixed-pitch-font/.
+
+* org-mode
+** =org-fancy-priorities=
+The package provides good-looking icons before level headings.
+#+begin_src emacs-lisp
+(use-package! org-fancy-priorities
+  :hook
+  (org-mode . org-fancy-priorities-mode)
+  :config
+  (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
+#+end_src
+** gtd
+#+begin_src emacs-lisp
+(after! org
+  (setq org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)"))
+        org-priority-faces '((?A :foreground "#e45649")
+                             (?B :foreground "#da8548")
+                             (?C :foreground "#0098dd"))
+        ;; org-latex-minted-options '(("frame" "lines") ("linenos=true"))
+        org-journal-file-format "%Y-%m-%d.org"
+        org-format-latex-options (plist-put org-format-latex-options :scale 4.0)
+        org-agenda-files (apply 'append
+			        (mapcar
+			         (lambda (directory)
+				   (directory-files-recursively
+				    directory org-agenda-file-regexp))
+			         '("~/org/")))
+        )
+  (add-to-list 'org-modules 'org-habit)
+  )
+#+end_src
+** TODO support for pdf and eps images
+#+begin_src emacs-lisp :tangle nil
+;; Suggested on the org-mode maillist by Julian Burgos
+(add-to-list 'image-file-name-extensions "pdf")
+(add-to-list 'image-file-name-extensions "eps")
+(add-to-list 'image-type-file-name-regexps '("\\.eps\\'" . imagemagick))
+(add-to-list 'image-file-name-extensions "eps")
+(add-to-list 'image-type-file-name-regexps '("\\.pdf\\'" . imagemagick))
+(add-to-list 'image-file-name-extensions "pdf")
+#+end_src
+** TODO LaTeX export support for minted env
+** TODO shortkey for =sparse-tree=. =SPC / *= currently occupied by =rg=.
+* helm
+** helm-eshell
+#+begin_src emacs-lisp
+(require 'helm-eshell)
+(add-hook 'eshell-mode-hook
+          #'(lambda ()
+              (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
+#+end_src
+* company-mode
+#+begin_src emacs-lisp
+(setq company-idle-delay 0.2)
+(use-package company-box
+  :hook (company-mode . company-box-mode))
+#+end_src
+* emms
+#+begin_src emacs-lisp
+(require 'emms-setup)
+(emms-all)
+(emms-default-players) ;; set up the list of the default players
+;; where my music is?
+(setq emms-source-file-default-directory "~/Music/")
+;; shortcuts for emms
+(after! emms
+  (map! :desc "Select playlist" :ne "SPC a p" #'emms-add-playlist)
+  (map! :desc "emms" :ne "SPC e m" #'emms)
+  (append emms-player-mplayer-parameters (list "-novideo"))
+  )
+#+end_src
+* lisp
+#+begin_src emacs-lisp
+(use-package parinfer
+  :ensure t
+  :bind
+  (("C-," . parinfer-toggle-mode))
+  :init
+  (progn
+    (setq parinfer-extensions
+          '(defaults       ; should be included.
+            pretty-parens  ; different paren styles for different modes.
+            evil           ; If you use Evil.
+            lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
+            ;; paredit        ; Introduce some paredit commands.
+            smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
+            smart-yank))   ; Yank behavior depend on mode.
+    (add-hook 'clojure-mode-hook #'parinfer-mode)
+    (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'common-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'scheme-mode-hook #'parinfer-mode)
+    (add-hook 'lisp-mode-hook #'parinfer-mode)))
+#+end_src
+* input method
+The configuration is currently disabled because of its slowliness.
+#+begin_src emacs-lisp
+;; configuration of input method pyim
+(use-package! pyim
+  :ensure nil
+  :demand t
+  :config
+  (use-package pyim-basedict
+    :ensure nil
+    :config (pyim-basedict-enable))
+  (setq default-input-method "pyim")
+  (setq pyim-default-scheme 'quanpin)
+  (setq pyim-page-tooltip 'posframe)
+  )
+#+end_src
+* docs
+** djvu
+** nov
+Emacs major mode for reading EPUB files.
+#+begin_src emacs-lisp
+(defun my-nov-font-setup ()
+  (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
+                           :height 1.5))
+(defun enlarge-left-fringe ()
+  (setq left-fringe-width 30))
+(add-hook 'nov-mode-hook 'my-nov-font-setup)
+(add-hook 'nov-mode-hook 'enlarge-left-fringe)
+#+end_src
+* dired
+** basic settings
+#+begin_src emacs-lisp
+;; prot
+(use-package dired
+  :hook (dired-mode-hook . dired-hide-details-mode)
+  :config
+  (setq delete-by-moving-to-trash t)
+  )
+#+end_src
+
+#+RESULTS:
+| dired-hide-details-mode |
+
+** shortkeys
+#+begin_src emacs-lisp
+(defun goto-downloads () (interactive)
+  "Open Downloads folder."
+  (find-file "~/Downloads"))
+#+end_src
+
+#+RESULTS:
+: goto-download
+
+* miscellaneous
+** open in external app
+#+begin_src emacs-lisp
+(defun xah-open-in-external-app (&optional @fname)
+  "Open the current file or dired marked files in external app.
+The app is chosen from your OS's preference.
+
+When called in emacs lisp, if @fname is given, open that.
+
+URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
+Version 2019-11-04"
+  (interactive)
+  (let* (
+         ($file-list
+          (if @fname
+              (progn (list @fname))
+            (if (string-equal major-mode "dired-mode")
+                (dired-get-marked-files)
+              (list (buffer-file-name)))))
+         ($do-it-p (if (<= (length $file-list) 5)
+                       t
+                     (y-or-n-p "Open more than 5 files? "))))
+    (when $do-it-p
+      (cond
+       ((string-equal system-type "windows-nt")
+        (mapc
+         (lambda ($fpath)
+           (w32-shell-execute "open" $fpath)) $file-list))
+       ((string-equal system-type "darwin")
+        (mapc
+         (lambda ($fpath)
+           (shell-command
+            (concat "open " (shell-quote-argument $fpath))))  $file-list))
+       ((string-equal system-type "gnu/linux")
+        (mapc
+         (lambda ($fpath) (let ((process-connection-type nil))
+                            (start-process "" nil "xdg-open" $fpath))) $file-list))))))
+
+(map! :desc "Open in external app" :ne "SPC e o" #'xah-open-in-external-app)
+#+end_src
+
+** transparency
+Interactively toggle transparency in winframe.
+#+begin_src emacs-lisp
+(defun transparency (value)
+  "sets the transparency of the frame window. 0=transparent/100=opaque"
+  (interactive "ntransparency value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
+#+end_src
+** cursor in =-nw= mode
+#+begin_src emacs-lisp
+(unless (display-graphic-p)
+        (require 'evil-terminal-cursor-changer)
+        (evil-terminal-cursor-changer-activate) ; or (etcc-on)
+        )
+#+end_src
+** dynamics module support
+#+begin_src emacs-lisp
+(setq module-file-suffix t)
+#+end_src
+** keyfreq stat
+#+begin_src emacs-lisp
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
+#+end_src
+** disable backup/auto save
+#+begin_src emacs-lisp
+;disable backup
+(setq backup-inhibited t)
+;disable auto save
+(setq auto-save-default nil)
+#+end_src
+** line number
+Disable line number by default.
+#+begin_src emacs-lisp
+(defun nolinum ()
+  (display-line-numbers-mode 0)
+  (olivetti-mode 1)
+  )
+
+(defun viper-lisp-mode ()
+  (display-line-numbers-mode 0)
+  (olivetti-mode 1)
+  (paren-face-mode 1)
+  (rainbow-delimiters-mode 0)
+  (parinfer-mode 1)
+  (lispy-mode 0))
+(add-hook 'org-mode-hook 'nolinum)
+(add-hook 'lisp-mode-hook 'viper-lisp-mode)
+(add-hook 'emacs-lisp-mode-hook 'viper-lisp-mode)
+#+end_src
+
+#+RESULTS:
+| nolinum | overseer-enable-mode | doom--setq-lisp-indent-function-for-emacs-lisp-mode-h | doom--setq-outline-regexp-for-emacs-lisp-mode-h | doom--setq-mode-name-for-emacs-lisp-mode-h | doom--setq-tab-width-for-emacs-lisp-mode-h | outline-minor-mode | rainbow-delimiters-mode | highlight-quoted-mode | +emacs-lisp-extend-imenu-h | +emacs-lisp-init-straight-maybe-h | doom--enable-+emacs-lisp-ert-mode-in-emacs-lisp-mode-h | parinfer-mode | lispy-mode | +evil-embrace-lisp-mode-hook-h | embrace-emacs-lisp-mode-hook |
+
+** dashboard
+#+begin_src emacs-lisp :tangle nil
+(require 'dashboard)
+(dashboard-setup-startup-hook)
+;; Or if you use use-package
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+(setq dashboard-banner-logo-title "迟早会完蛋。")
+(setq dashboard-items '((projects . 10)
+                        (agenda . 10)))
+
+(setq dashboard-set-init-info nil)
+(setq dashboard-set-footer nil)
+;;(setq dashboard-footer-messages '("迟早会完蛋。")
+;;                                '("The big brother is watching you."))
+#+end_src
+
+#+RESULTS:
+
+** ivy-posframe
+#+begin_src emacs-lisp
+(require 'ivy-posframe)
+;; display at `ivy-posframe-style'
+(setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
+(setq ivy-posframe-parameters
+      '((left-fringe . 8)
+        (right-fringe . 8)))
+(ivy-posframe-mode 1)
+#+end_src
+* window/buffer management
+Shortkey for ace-window:
+#+begin_src emacs-lisp
+(map! :desc "ace-window" :ne "SPC v" #'ace-window)
+#+end_src
+
+From prot's dotEmacs. Defines a monocole layout similar to Tiling window managers.
+Currently the hyper-key(positioned at right ctrl on my xps-15) is used for window operations inside Emacs.
+In the future I might replace dwm with exwm and the super key can be handled by Emacs in the X11 layer.
+#+begin_src emacs-lisp
+(use-package emacs
+  :config
+  (defvar prot/window-configuration nil
+    "Current window configuration.
+Intended for use by `prot/window-monocle'.")
+
+  (define-minor-mode prot/window-single-toggle
+    "Toggle between multiple windows and single window.
+This is the equivalent of maximising a window.  Tiling window
+managers such as DWM, BSPWM refer to this state as 'monocle'."
+    :lighter " [M]"
+    :global nil
+    (if (one-window-p)
+        (when prot/window-configuration
+          (set-window-configuration prot/window-configuration))
+      (setq prot/window-configuration (current-window-configuration))
+      (delete-other-windows)))
+  :bind ("H-s" . prot/window-single-toggle))
+#+end_src
+* init buffer
+#+begin_src emacs-lisp
+(setq initial-buffer-choice "~/.doom.d/Splash.org")
+#+end_src
+* shortkeys
+#+begin_src emacs-lisp
+(map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
+(map! :desc "goto-downloads" :ne "SPC d d" #'goto-downloads)
+#+end_src
