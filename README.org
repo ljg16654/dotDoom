@@ -1,0 +1,4 @@
+#+TITLE: README
+
+Configuration for [[https://github.com/hlissner/doom-emacs][Doom Emacs]].
+=config.el= is tangled from =config.org=.
