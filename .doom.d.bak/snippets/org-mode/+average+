@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: avrg
-# key: avrg                                                                                                                                                                              
-# --
-\[
-${1: symbol} = \frac{1}{${2: number of measurements}} \sum_{i = 1}^{$2} $1_{i} = ${3: average value} \pm ${4: uncertainty} \\text{${5: unit}} \quad \text{with} \quad u_{r, $1} = ${6: relative uncertainty}\%.
-\]

@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: dataTable
-# key: dtt
-# --
-${1:name of quantity} \\\(${2:symbol}\\\) ${3:average} \\\(\pm\\\) ${4:accuracy} ${5:unit}
-#+CAPTION: $6
-#+TBLNAME: $7

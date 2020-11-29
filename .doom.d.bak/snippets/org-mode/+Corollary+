@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: corollary
-# key: <cor
-# --
-#+ATTR_LATEX: :options {${1:name}}{}
-#+BEGIN_corollary
-$0
-#+END_corollary

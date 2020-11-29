@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: secondOrderPartialDerivative
-# key: ppd
-# --
-\frac{\partial^2{$1}}{\partial{$2}^2}$0

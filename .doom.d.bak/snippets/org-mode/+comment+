@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: comment
-# key: <cm
-# --
-
-#+BEGIN_comment
-$0
-#+END_comment
