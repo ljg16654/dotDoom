@@ -1,0 +1,4 @@
+# name: boldsymbol
+# key: bs
+# --
+\boldsymbol{$1}

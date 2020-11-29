@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: mixedSecondOrderPartialDerivative
+# key: pdd
+# --
+\frac{\partial^2{$1}}{\partial{$2}\partial{$3}}$0

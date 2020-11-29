@@ -1,0 +1,5 @@
+ mode: snippet -*-
+# name: X1n
+# key: X1n
+# --
+X_1, X_2, \cdots, X_n
