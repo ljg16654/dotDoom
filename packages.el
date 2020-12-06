@@ -31,6 +31,8 @@
 (package! dashboard)
 (package! ivy-posframe)
 (package! w3m)
+(package! peep-dired)
+(package! dired-subtree)
 
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
