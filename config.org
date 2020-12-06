@@ -87,9 +87,13 @@ The package provides good-looking icons before level headings.
           #'(lambda ()
               (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
 #+end_src
+* lsp
+#+begin_src emacs-lisp
+(setq read-process-output-max 1048576)
+#+end_src
 * company-mode
 #+begin_src emacs-lisp
-(setq company-idle-delay 0.2)
+(setq company-idle-delay 0.05)
 (use-package company-box
   :hook (company-mode . company-box-mode))
 #+end_src
@@ -108,7 +112,7 @@ The package provides good-looking icons before level headings.
   )
 #+end_src
 * lisp
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle nil
 (use-package parinfer
   :ensure t
   :bind
@@ -131,7 +135,7 @@ The package provides good-looking icons before level headings.
 #+end_src
 * input method
 The configuration is currently disabled because of its slowliness.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle nil
 ;; configuration of input method pyim
 (use-package! pyim
   :ensure nil
@@ -162,6 +166,7 @@ Emacs major mode for reading EPUB files.
 ** basic settings
 #+begin_src emacs-lisp
 ;; prot
+(setq-default dired-hide-details-mode t)
 (use-package dired
   :hook (dired-mode-hook . dired-hide-details-mode)
   :config
@@ -182,6 +187,18 @@ Emacs major mode for reading EPUB files.
 #+RESULTS:
 : goto-download
 
+** uncompress/unzip
+* eshell
+** environment variable for eshell (exclusive)
+[[http://ergoemacs.org/emacs/eshell.html][Xah's tutorial]]
+#+begin_src emacs-lisp :tangle nil
+(setenv "PATH"
+  (concat
+   "/usr/local/cbc/bin" ";"
+   (getenv "PATH") ; inherited from OS
+  )
+)
+#+end_src
 * miscellaneous
 ** open in external app
 #+begin_src emacs-lisp
@@ -337,6 +354,7 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
       (delete-other-windows)))
   :bind ("H-s" . prot/window-single-toggle))
 #+end_src
+* w3m
 * init buffer
 #+begin_src emacs-lisp
 (setq initial-buffer-choice "~/.doom.d/Splash.org")
@@ -346,3 +364,10 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
 (map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
 (map! :desc "goto-downloads" :ne "SPC d d" #'goto-downloads)
 #+end_src
+* theme
+#+begin_src emacs-lisp
+(load-theme 'modus-vivendi t)
+#+end_src
+
+#+RESULTS:
+: t

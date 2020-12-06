@@ -30,6 +30,7 @@
 (package! paredit)
 (package! dashboard)
 (package! ivy-posframe)
+(package! w3m)
 
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
