@@ -162,6 +162,11 @@ Emacs major mode for reading EPUB files.
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 (add-hook 'nov-mode-hook 'enlarge-left-fringe)
 #+end_src
+** pdf
+Activate =pdf-tools=.
+#+begin_src emacs-lisp
+(pdf-tools-install)
+#+end_src
 * dired
 ** basic settings
 #+begin_src emacs-lisp
@@ -290,8 +295,8 @@ Disable line number by default.
   (olivetti-mode 1)
   (paren-face-mode 1)
   (rainbow-delimiters-mode 0)
-  (parinfer-mode 1)
-  (lispy-mode 0))
+  (paredit-mode)
+  (lispy-mode))
 (add-hook 'org-mode-hook 'nolinum)
 (add-hook 'lisp-mode-hook 'viper-lisp-mode)
 (add-hook 'emacs-lisp-mode-hook 'viper-lisp-mode)

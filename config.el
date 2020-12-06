@@ -62,6 +62,8 @@
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 (add-hook 'nov-mode-hook 'enlarge-left-fringe)
 
+(pdf-tools-install)
+
 ;; prot
 (setq-default dired-hide-details-mode t)
 (use-package dired
@@ -145,8 +147,8 @@ Version 2019-11-04"
   (olivetti-mode 1)
   (paren-face-mode 1)
   (rainbow-delimiters-mode 0)
-  (parinfer-mode 1)
-  (lispy-mode 0))
+  (paredit-mode)
+  (lispy-mode))
 (add-hook 'org-mode-hook 'nolinum)
 (add-hook 'lisp-mode-hook 'viper-lisp-mode)
 (add-hook 'emacs-lisp-mode-hook 'viper-lisp-mode)
