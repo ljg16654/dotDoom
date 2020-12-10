@@ -31,6 +31,8 @@
   (add-to-list 'org-modules 'org-habit)
   )
 
+(setq org-roam-directory "~/org-roam")
+
 (require 'helm-eshell)
 (add-hook 'eshell-mode-hook
           #'(lambda ()
@@ -54,16 +56,6 @@
   (append emms-player-mplayer-parameters (list "-novideo"))
   )
 
-(defun my-nov-font-setup ()
-  (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
-                           :height 1.5))
-(defun enlarge-left-fringe ()
-  (setq left-fringe-width 30))
-(add-hook 'nov-mode-hook 'my-nov-font-setup)
-(add-hook 'nov-mode-hook 'enlarge-left-fringe)
-
-(pdf-tools-install)
-
 ;; prot
 (setq-default dired-hide-details-mode t)
 (use-package dired
@@ -79,6 +71,9 @@
 (defun goto-downloads () (interactive)
   "Open Downloads folder."
   (find-file "~/Downloads"))
+
+(map! :desc "goto-downloads" :ne "SPC d d" #'goto-downloads)
+(map! :desc "peep-dired" :ne "SPC d p" #'peep-dired)
 
 (defun xah-open-in-external-app (&optional @fname)
   "Open the current file or dired marked files in external app.
@@ -153,13 +148,7 @@ Version 2019-11-04"
 (add-hook 'lisp-mode-hook 'viper-lisp-mode)
 (add-hook 'emacs-lisp-mode-hook 'viper-lisp-mode)
 
-(require 'ivy-posframe)
-;; display at `ivy-posframe-style'
-(setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
-(setq ivy-posframe-parameters
-      '((left-fringe . 8)
-        (right-fringe . 8)))
-(ivy-posframe-mode 1)
+(setq browse-url-browser-function 'browse-url-firefox)
 
 (map! :desc "ace-window" :ne "SPC v" #'ace-window)
 
@@ -185,6 +174,15 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
 (setq initial-buffer-choice "~/.doom.d/Splash.org")
 
 (map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
-(map! :desc "goto-downloads" :ne "SPC d d" #'goto-downloads)
 
-(load-theme 'modus-vivendi t)
+(load-theme 'doom-miramare t)
+
+(defun my-nov-font-setup ()
+  (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
+                           :height 1.5))
+(defun enlarge-left-fringe ()
+  (setq left-fringe-width 30))
+(add-hook 'nov-mode-hook 'my-nov-font-setup)
+(add-hook 'nov-mode-hook 'enlarge-left-fringe)
+
+(pdf-tools-install)

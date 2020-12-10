@@ -64,3 +64,26 @@
 (setq dashboard-set-footer nil)
 ;;(setq dashboard-footer-messages '("迟早会完蛋。")
 ;;                                '("The big brother is watching you."))
+
+(require 'ivy-posframe)
+;; display at `ivy-posframe-style'
+(setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
+(setq ivy-posframe-parameters
+      '((left-fringe . 8)
+        (right-fringe . 8)))
+(ivy-posframe-mode 1)
+
+(add-hook! 'doom-reload-hook #'posframe-delete-all)
+
+(use-package eaf
+  :load-path "~/repos/emacs-application-framework" ; Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
+  :custom
+  (eaf-find-alternate-file-in-dired t)
+  :config
+  (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+  (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+  (eaf-bind-key take_photo "p" eaf-camera-keybinding))
+
+(setq eaf-proxy-type "http")
+(setq eaf-proxy-host "127.0.0.1")
+(setq eaf-proxy-port "12333")

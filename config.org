@@ -66,7 +66,14 @@ The package provides good-looking icons before level headings.
         )
   (add-to-list 'org-modules 'org-habit)
   )
+
 #+end_src
+*** org-roam
+#+begin_src emacs-lisp
+(setq org-roam-directory "~/org-roam")
+#+end_src
+
+
 ** TODO support for pdf and eps images
 #+begin_src emacs-lisp :tangle nil
 ;; Suggested on the org-mode maillist by Julian Burgos
@@ -149,24 +156,6 @@ The configuration is currently disabled because of its slowliness.
   (setq pyim-page-tooltip 'posframe)
   )
 #+end_src
-* docs
-** djvu
-** nov
-Emacs major mode for reading EPUB files.
-#+begin_src emacs-lisp
-(defun my-nov-font-setup ()
-  (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
-                           :height 1.5))
-(defun enlarge-left-fringe ()
-  (setq left-fringe-width 30))
-(add-hook 'nov-mode-hook 'my-nov-font-setup)
-(add-hook 'nov-mode-hook 'enlarge-left-fringe)
-#+end_src
-** pdf
-Activate =pdf-tools=.
-#+begin_src emacs-lisp
-(pdf-tools-install)
-#+end_src
 * dired
 ** basic settings
 #+begin_src emacs-lisp
@@ -193,6 +182,9 @@ Activate =pdf-tools=.
 (defun goto-downloads () (interactive)
   "Open Downloads folder."
   (find-file "~/Downloads"))
+
+(map! :desc "goto-downloads" :ne "SPC d d" #'goto-downloads)
+(map! :desc "peep-dired" :ne "SPC d p" #'peep-dired)
 #+end_src
 
 #+RESULTS:
@@ -327,7 +319,8 @@ Disable line number by default.
 #+RESULTS:
 
 ** ivy-posframe
-#+begin_src emacs-lisp
+For unknown reason, ivy-posframe doesn't function normally after doom reloads. Such bug occurred after I upgraded to Emacs28/gccemacs and till now I haven't managed to find a solution to it.
+#+begin_src emacs-lisp :tangle nil
 (require 'ivy-posframe)
 ;; display at `ivy-posframe-style'
 (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
@@ -335,6 +328,15 @@ Disable line number by default.
       '((left-fringe . 8)
         (right-fringe . 8)))
 (ivy-posframe-mode 1)
+#+end_src
+
+[[https://github.com/hlissner/doom-emacs/issues/2322][solution]]
+#+begin_src emacs-lisp :tangle nil
+(add-hook! 'doom-reload-hook #'posframe-delete-all)
+#+end_src
+** default browser
+#+begin_src emacs-lisp
+(setq browse-url-browser-function 'browse-url-firefox)
 #+end_src
 * window/buffer management
 Shortkey for ace-window:
@@ -365,6 +367,7 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
       (delete-other-windows)))
   :bind ("H-s" . prot/window-single-toggle))
 #+end_src
+
 * w3m
 * init buffer
 #+begin_src emacs-lisp
@@ -373,12 +376,50 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
 * shortkeys
 #+begin_src emacs-lisp
 (map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
-(map! :desc "goto-downloads" :ne "SPC d d" #'goto-downloads)
 #+end_src
 * theme
 #+begin_src emacs-lisp
-(load-theme 'modus-vivendi t)
+(load-theme 'doom-miramare t)
 #+end_src
 
 #+RESULTS:
 : t
+* docs
+** djvu
+** nov
+Emacs major mode for reading EPUB files.
+#+begin_src emacs-lisp
+(defun my-nov-font-setup ()
+  (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
+                           :height 1.5))
+(defun enlarge-left-fringe ()
+  (setq left-fringe-width 30))
+(add-hook 'nov-mode-hook 'my-nov-font-setup)
+(add-hook 'nov-mode-hook 'enlarge-left-fringe)
+#+end_src
+** pdf
+Activate =pdf-tools=.
+#+begin_src emacs-lisp
+(pdf-tools-install)
+#+end_src
+
+* eaf
+#+begin_src emacs-lisp :tangle nil
+(use-package eaf
+  :load-path "~/repos/emacs-application-framework" ; Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
+  :custom
+  (eaf-find-alternate-file-in-dired t)
+  :config
+  (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+  (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+  (eaf-bind-key take_photo "p" eaf-camera-keybinding))
+
+(setq eaf-proxy-type "http")
+(setq eaf-proxy-host "127.0.0.1")
+(setq eaf-proxy-port "12333")
+#+end_src
+
+#+begin_src
+export http_proxy="http://127.0.0.1:12333"
+export https_proxy="http://127.0.0.1:12333"
+#+end_src

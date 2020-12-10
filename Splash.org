@@ -1,6 +1,6 @@
 #+startup: inlineimages
 
-  [[./logo.svg]]
+[[./logo.svg]]
 *GNU Emacs* version 28.0.50
 
 
