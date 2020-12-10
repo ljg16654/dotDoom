@@ -370,7 +370,9 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
 
 * w3m
 * init buffer
-#+begin_src emacs-lisp
+The init buffer is annoying when running emacsclient in terminal.
+Scratch buffer is good enough.
+#+begin_src emacs-lisp :tangle nil
 (setq initial-buffer-choice "~/.doom.d/Splash.org")
 #+end_src
 * shortkeys
@@ -379,7 +381,7 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
 #+end_src
 * theme
 #+begin_src emacs-lisp
-(load-theme 'doom-miramare t)
+(load-theme 'doom-tomorrow-night t)
 #+end_src
 
 #+RESULTS:
@@ -399,7 +401,7 @@ Emacs major mode for reading EPUB files.
 #+end_src
 ** pdf
 Activate =pdf-tools=.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle nil
 (pdf-tools-install)
 #+end_src
 

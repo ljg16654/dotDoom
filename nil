@@ -75,6 +75,10 @@
 
 (add-hook! 'doom-reload-hook #'posframe-delete-all)
 
+(setq initial-buffer-choice "~/.doom.d/Splash.org")
+
+(pdf-tools-install)
+
 (use-package eaf
   :load-path "~/repos/emacs-application-framework" ; Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
   :custom

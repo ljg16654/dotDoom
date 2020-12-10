@@ -171,11 +171,9 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
       (delete-other-windows)))
   :bind ("H-s" . prot/window-single-toggle))
 
-(setq initial-buffer-choice "~/.doom.d/Splash.org")
-
 (map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
 
-(load-theme 'doom-miramare t)
+(load-theme 'doom-tomorrow-night t)
 
 (defun my-nov-font-setup ()
   (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
@@ -184,5 +182,3 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
   (setq left-fringe-width 30))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 (add-hook 'nov-mode-hook 'enlarge-left-fringe)
-
-(pdf-tools-install)
