@@ -36,6 +36,7 @@
 (package! lsp-jedi)
 (package! lsp-pyright)
 (package! lsp-python-ms)
+(package! exwm)
 
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
