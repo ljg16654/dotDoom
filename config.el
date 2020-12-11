@@ -40,6 +40,13 @@
 
 (setq read-process-output-max 1048576)
 
+(use-package lsp-python-ms
+  :ensure t
+  :init (setq lsp-python-ms-auto-install-server t)
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-python-ms)
+                          (lsp))))  ; or lsp-deferred
+
 (setq company-idle-delay 0.05)
 (use-package company-box
   :hook (company-mode . company-box-mode))

@@ -95,8 +95,33 @@ The package provides good-looking icons before level headings.
               (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
 #+end_src
 * lsp
+For python:
+#+begin_src emacs-lisp :tangle nil
+(use-package lsp-jedi
+  :config
+  (with-eval-after-load "lsp-mode"
+    (add-to-list 'lsp-disabled-clients 'pyls)
+    (add-to-list 'lsp-enabled-clients 'jedi)))
+#+end_src
 #+begin_src emacs-lisp
 (setq read-process-output-max 1048576)
+#+end_src
+
+#+begin_src emacs-lisp :tangle nil
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-pyright)
+                          (lsp))))  ; or lsp-deferred
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package lsp-python-ms
+  :ensure t
+  :init (setq lsp-python-ms-auto-install-server t)
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-python-ms)
+                          (lsp))))  ; or lsp-deferred
 #+end_src
 * company-mode
 #+begin_src emacs-lisp

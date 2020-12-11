@@ -33,7 +33,9 @@
 (package! w3m)
 (package! peep-dired)
 (package! dired-subtree)
-
+(package! lsp-jedi)
+(package! lsp-pyright)
+(package! lsp-python-ms)
 
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
