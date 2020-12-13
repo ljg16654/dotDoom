@@ -37,6 +37,7 @@
 (package! lsp-pyright)
 (package! lsp-python-ms)
 (package! exwm)
+(package! matlab-mode)
 
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:

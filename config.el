@@ -176,11 +176,11 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
           (set-window-configuration prot/window-configuration))
       (setq prot/window-configuration (current-window-configuration))
       (delete-other-windows)))
-  :bind ("H-s" . prot/window-single-toggle))
+  :bind ("s-s" . prot/window-single-toggle))
 
 (map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
 
-(load-theme 'doom-tomorrow-night t)
+(load-theme 'doom-solarized-light t)
 
 (defun my-nov-font-setup ()
   (face-remap-add-relative 'variable-pitch :family "Liberation Serif"

@@ -109,7 +109,6 @@ For python:
 
 #+begin_src emacs-lisp :tangle nil
 (use-package lsp-pyright
-  :ensure t
   :hook (python-mode . (lambda ()
                           (require 'lsp-pyright)
                           (lsp))))  ; or lsp-deferred
@@ -117,7 +116,6 @@ For python:
 
 #+begin_src emacs-lisp
 (use-package lsp-python-ms
-  :ensure t
   :init (setq lsp-python-ms-auto-install-server t)
   :hook (python-mode . (lambda ()
                           (require 'lsp-python-ms)
@@ -390,8 +388,11 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
           (set-window-configuration prot/window-configuration))
       (setq prot/window-configuration (current-window-configuration))
       (delete-other-windows)))
-  :bind ("H-s" . prot/window-single-toggle))
+  :bind ("s-s" . prot/window-single-toggle))
 #+end_src
+
+#+RESULTS:
+: prot/window-single-toggle
 
 * w3m
 * init buffer
@@ -406,7 +407,7 @@ Scratch buffer is good enough.
 #+end_src
 * theme
 #+begin_src emacs-lisp
-(load-theme 'doom-tomorrow-night t)
+(load-theme 'doom-solarized-light t)
 #+end_src
 
 #+RESULTS:
