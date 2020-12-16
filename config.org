@@ -27,11 +27,14 @@ The currently preferred monospace fonts are
 + Fira mono
 + iconsolata
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "Monaco for Powerline" :size 40 :weight 'light)
-      doom-variable-pitch-font (font-spec :family "Sans Serif" :size 40)
+(setq doom-font (font-spec :family "Monaco for Powerline" :size 38 :weight 'light)
+      doom-variable-pitch-font (font-spec :family "GentiumAlt" :size 42)
       )
-(setq-default line-spacing 0.3)
+(setq-default line-spacing 0.5)
 #+end_src
+
+#+RESULTS:
+: 0.5
 
 For mixed font to be activated, =mixed-pitch-mode= should be activated. However, the current version doesn't support change of height of fixed-pitch font.
 [[https://gitlab.com/jabranham/mixed-pitch/-/issues/6][related issue]]
@@ -68,6 +71,10 @@ The package provides good-looking icons before level headings.
   )
 
 #+end_src
+
+#+RESULTS:
+| org-habit | ol-bibtex |
+
 *** org-roam
 #+begin_src emacs-lisp
 (setq org-roam-directory "~/org-roam")
@@ -361,6 +368,21 @@ For unknown reason, ivy-posframe doesn't function normally after doom reloads. S
 #+begin_src emacs-lisp
 (setq browse-url-browser-function 'browse-url-firefox)
 #+end_src
+** matlab-mode
+#+begin_src emacs-lisp
+(setq matlab-shell-command "/usr/local/MATLAB/R2020a/bin/matlab")
+#+end_src
+
+#+RESULTS:
+: /usr/local/MATLAB/R2020a/bin/matlab
+
+** focused-editing
+#+begin_src emacs-lisp
+(map! :desc "toggle olivetti-mode" :ne "SPC o v" #'olivetti-mode)
+#+end_src
+
+#+RESULTS:
+
 * window/buffer management
 Shortkey for ace-window:
 #+begin_src emacs-lisp
@@ -407,7 +429,7 @@ Scratch buffer is good enough.
 #+end_src
 * theme
 #+begin_src emacs-lisp
-(load-theme 'doom-solarized-light t)
+(load-theme 'adwaita t)
 #+end_src
 
 #+RESULTS:

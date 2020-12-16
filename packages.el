@@ -20,7 +20,6 @@
 (package! org-tanglesync)
 (package! modus-vivendi-theme)
 (package! modus-operandi-theme)
-(package! mixed-pitch)
 (package! org-noter)
 (package! olivetti)
 (package! outshine)
@@ -28,16 +27,14 @@
 (package! company-box)
 (package! fira-code-mode)
 (package! paredit)
-(package! dashboard)
-(package! ivy-posframe)
 (package! w3m)
 (package! peep-dired)
 (package! dired-subtree)
-(package! lsp-jedi)
-(package! lsp-pyright)
 (package! lsp-python-ms)
-(package! exwm)
 (package! matlab-mode)
+(package! org-roam-bibtex)
+(package! org-roam-server)
+(package! org-sidebar)
 
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:

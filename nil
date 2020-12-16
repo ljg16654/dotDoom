@@ -16,7 +16,6 @@
     (add-to-list 'lsp-enabled-clients 'jedi)))
 
 (use-package lsp-pyright
-  :ensure t
   :hook (python-mode . (lambda ()
                           (require 'lsp-pyright)
                           (lsp))))  ; or lsp-deferred

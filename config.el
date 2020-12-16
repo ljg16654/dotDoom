@@ -2,10 +2,10 @@
       user-mail-address "ljg16654@sjtu.edu.cn"
 )
 
-(setq doom-font (font-spec :family "Monaco for Powerline" :size 40 :weight 'light)
-      doom-variable-pitch-font (font-spec :family "Sans Serif" :size 40)
+(setq doom-font (font-spec :family "Monaco for Powerline" :size 38 :weight 'light)
+      doom-variable-pitch-font (font-spec :family "GentiumAlt" :size 42)
       )
-(setq-default line-spacing 0.3)
+(setq-default line-spacing 0.5)
 
 (use-package! org-fancy-priorities
   :hook
@@ -41,7 +41,6 @@
 (setq read-process-output-max 1048576)
 
 (use-package lsp-python-ms
-  :ensure t
   :init (setq lsp-python-ms-auto-install-server t)
   :hook (python-mode . (lambda ()
                           (require 'lsp-python-ms)
@@ -157,6 +156,8 @@ Version 2019-11-04"
 
 (setq browse-url-browser-function 'browse-url-firefox)
 
+(setq matlab-shell-command "/usr/local/MATLAB/R2020a/bin/matlab")
+
 (map! :desc "ace-window" :ne "SPC v" #'ace-window)
 
 (use-package emacs
@@ -180,7 +181,7 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
 
 (map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
 
-(load-theme 'doom-solarized-light t)
+(load-theme 'adwaita t)
 
 (defun my-nov-font-setup ()
   (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
