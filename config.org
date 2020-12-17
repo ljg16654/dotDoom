@@ -91,10 +91,9 @@ The package provides good-looking icons before level headings.
 (add-to-list 'image-file-name-extensions "pdf")
 #+end_src
 ** TODO LaTeX export support for minted env
-** TODO shortkey for =sparse-tree=. =SPC / *= currently occupied by =rg=.
 ** org-capture
 *** templates
-
+Under test.
 |--------+--------------------------|
 | symbol | expansion                |
 |--------+--------------------------|
@@ -267,6 +266,7 @@ For python:
 #+end_src
 * input method
 The configuration is currently disabled because of its slowliness.
+** TODO learn from redguardtoo's configuration for Chinese input.
 #+begin_src emacs-lisp :tangle nil
 ;; configuration of input method pyim
 (use-package! pyim
@@ -283,6 +283,7 @@ The configuration is currently disabled because of its slowliness.
 #+end_src
 * dired
 ** basic settings
+*** TODO: fixed failure of hide-detail
 #+begin_src emacs-lisp
 ;; prot
 (setq-default dired-hide-details-mode t)
@@ -295,7 +296,7 @@ The configuration is currently disabled because of its slowliness.
 
 #+RESULTS:
 | dired-hide-details-mode |
-** subtree
+** TODO subtree
 ** peep-dired
 #+begin_src emacs-lisp
 (evil-define-key 'normal peep-dired-mode-map (kbd "j") 'peep-dired-next-file
@@ -315,7 +316,7 @@ The configuration is currently disabled because of its slowliness.
 #+RESULTS:
 : goto-download
 
-** uncompress/unzip
+** TODO uncompress/unzip
 * eshell
 ** environment variable for eshell (exclusive)
 [[http://ergoemacs.org/emacs/eshell.html][Xah's tutorial]]
@@ -400,6 +401,11 @@ Interactively toggle transparency in winframe.
 (setq auto-save-default nil)
 #+end_src
 ** line number
+Shortkey for toggling line numbers:
+#+begin_src emacs-lisp
+(map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
+#+end_src
+
 Disable line number by default.
 #+begin_src emacs-lisp
 (defun nolinum ()
@@ -422,8 +428,7 @@ Disable line number by default.
 #+RESULTS:
 | nolinum | overseer-enable-mode | doom--setq-lisp-indent-function-for-emacs-lisp-mode-h | doom--setq-outline-regexp-for-emacs-lisp-mode-h | doom--setq-mode-name-for-emacs-lisp-mode-h | doom--setq-tab-width-for-emacs-lisp-mode-h | outline-minor-mode | rainbow-delimiters-mode | highlight-quoted-mode | +emacs-lisp-extend-imenu-h | +emacs-lisp-init-straight-maybe-h | doom--enable-+emacs-lisp-ert-mode-in-emacs-lisp-mode-h | parinfer-mode | lispy-mode | +evil-embrace-lisp-mode-hook-h | embrace-emacs-lisp-mode-hook |
 
-
-** dashboard
+** dashboard and init buffer
 #+begin_src emacs-lisp :tangle nil
 (require 'dashboard)
 (dashboard-setup-startup-hook)
@@ -443,7 +448,11 @@ Disable line number by default.
 #+end_src
 
 #+RESULTS:
-
+The init buffer is annoying when running emacsclient in terminal.
+Scratch buffer is good enough.
+#+begin_src emacs-lisp :tangle nil
+(setq initial-buffer-choice "~/.doom.d/Splash.org")
+#+end_src
 ** ivy-posframe
 For unknown reason, ivy-posframe doesn't function normally after doom reloads. Such bug occurred after I upgraded to Emacs28/gccemacs and till now I haven't managed to find a solution to it.
 #+begin_src emacs-lisp :tangle nil
@@ -459,10 +468,6 @@ For unknown reason, ivy-posframe doesn't function normally after doom reloads. S
 [[https://github.com/hlissner/doom-emacs/issues/2322][solution]]
 #+begin_src emacs-lisp :tangle nil
 (add-hook! 'doom-reload-hook #'posframe-delete-all)
-#+end_src
-** default browser
-#+begin_src emacs-lisp
-(setq browse-url-browser-function 'browse-url-firefox)
 #+end_src
 ** matlab-mode
 #+begin_src emacs-lisp
@@ -519,26 +524,22 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
 #+RESULTS:
 : prot/window-single-toggle
 
-* w3m
-* init buffer
-The init buffer is annoying when running emacsclient in terminal.
-Scratch buffer is good enough.
-#+begin_src emacs-lisp :tangle nil
-(setq initial-buffer-choice "~/.doom.d/Splash.org")
-#+end_src
-* shortkeys
+* browser
+** default browser
 #+begin_src emacs-lisp
-(map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
+(setq browse-url-browser-function 'browse-url-firefox)
 #+end_src
+** TODO fixed search with duckduckgo
+* shortkeys
 * theme
 #+begin_src emacs-lisp
-(load-theme 'adwaita t)
+(load-theme 'doom-gruvbox-light t)
 #+end_src
 
 #+RESULTS:
 : t
 * docs
-** djvu
+** TODO djvu
 ** nov
 Emacs major mode for reading EPUB files.
 #+begin_src emacs-lisp
