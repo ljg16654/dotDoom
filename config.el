@@ -21,12 +21,11 @@
         ;; org-latex-minted-options '(("frame" "lines") ("linenos=true"))
         org-journal-file-format "%Y-%m-%d.org"
         org-format-latex-options (plist-put org-format-latex-options :scale 4.0)
-        org-agenda-files (apply 'append
+        org-agenda-files (apply #'append
 			        (mapcar
 			         (lambda (directory)
-				   (directory-files-recursively
-				    directory org-agenda-file-regexp))
-			         '("~/org/")))
+				        (directory-files-recursively directory org-agenda-file-regexp))
+			            '("~/org/")))
         )
   (add-to-list 'org-modules 'org-habit)
   )
