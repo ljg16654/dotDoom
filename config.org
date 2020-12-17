@@ -100,43 +100,67 @@ Emacs-style keybinding are preferred over vim-style keybinding in quick capturin
 |---------+----------|
 As these are already fast enough, it's not considered necessary to include schedules or deadline in some template that require more than 1 keystroke.
 *** TODO templates: add learning-centralized template
-Expansions:
-|----------------------------+-------------------------------------|
-| symbol                     | expansion                           |
-|----------------------------+-------------------------------------|
-| %a                         | current buffer position?            |
-| %t                         | time                                |
-| %^t                        | prompt for time with popup calender |
-| %i                         | &optional active region             |
-| %{description and options} | prompt for an option                |
-| \n                         | eol                                 |
-| %?                         | cursor location                     |
-| %U                         |                                     |
-| %^g                        |                                     |
-|----------------------------+-------------------------------------|
-
++ Expansions:
+|----------------------------+----------------------------------------------|
+| symbol                     | expansion                                    |
+|----------------------------+----------------------------------------------|
+| %a                         | current buffer position?                     |
+| %t                         | time(active, for scheduling, deadline, etc.) |
+| %^t                        | prompt for time with popup calender          |
+| %i                         | &optional active region                      |
+| %{description and options} | prompt for an option                         |
+| \n                         | eol                                          |
+| %?                         | cursor location                              |
+| %U                         | inactive time stamp                          |
+| %^[gG]                     | prompt for tags, G being more powerful       |
+|----------------------------+----------------------------------------------|
++ Propreties:
+|---------------------------------------+-------------------------+---|
+| property                              | meaning                 |   |
+|---------------------------------------+-------------------------+---|
+| :prepend                              | add to beginning?       |   |
+| :clock-in, :clock-keep, :clock-resume | start clock in the item |   |
 [[file:~/.emacs.d/modules/lang/org/config.el::org-capture-templates]]
+
+=org-store-link=, binded to =SPC n l= by default, can store a link that can be later called by =org-insert-link=. Use such shortkey won't add much pressure and sometimes a link is not needed. Therefore, I prefer not to use =%a= insertion in journal templates.
+
+By default, the =:prepend= properties is activated for journal. I cannot quite understand how it makes sense so it's disabled.
+
+A few words to explain the "jc" template: =:clock-in= property starts timing when the template is called, timing starts no matter if a clocking is already running. In this case, one can use
++ do nothing :: the clock stops when the capture ends. The capture usually lasts less than a minute, so nothing informative on time consumption is recorded.
++ use =:clock-resume= :: Continue timing of the interrupted clock if such interrupted clock exists.
++ use =:clock-keep= :: Continue timing the captured event.
++ use both =:clock-resume= and =:clock-keep= :: make no sense as it's equivalent to using =:clock_keep=.
+
 #+begin_src emacs-lisp
 (setq org-capture-templates
         '(("t" "Personal t" entry
            (file+headline +org-capture-todo-file "Inbox")
-           "* TODO [%^{Select the urgency|A|B|C}] %?\n%i\n%a\n" :prepend t)
+              "* TODO [%^{Select the urgency|A|B|C}] %?\n%i\n%a\n" :prepend t)
+
           ("n" "Personal notes" entry
            (file+headline +org-capture-notes-file "Inbox")
-           "* %u %?\n%i\n%a" :prepend t)
+              "* %u %?\n%i\n%a" :prepend t)
+
           ("j" "Journal")
+
           ("ja" "Journal arbitrary recording" entry
            (file+olp+datetree +org-capture-journal-file)
-              "* %?\n%u\n%i" :append t)
-          ("jb" "Journal including the current buffer" entry
+              "* %?\n%u\n%i")
+
+          ("jc" "journal clock into something new" entry
            (file+olp+datetree +org-capture-journal-file)
-              "* %?\n%u\n%i\n%a" :append t)
+              "* %?\n%u" :clock-in t :clock-keep t)
           ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
           ;; {todo,notes,changelog}.org file is found in a parent directory.
           ;; Uses the basename from `+org-capture-todo-file',
           ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
 ))
 #+end_src
+
+#+RESULTS:
+| t | Personal t | entry | (file+headline +org-capture-todo-file Inbox) | * TODO [%^{Select the urgency | A | B | C}] %? |
+
 *** templates for reference
 Doom provides a list of project-oriented capture templates but I don 't want to use them right now
 #+begin_src emacs-lisp :tangle nil
@@ -358,11 +382,13 @@ The configuration is currently disabled because of its slowliness.
 )
 #+end_src
 * window/buffer management
+** ace-window
 Shortkey for ace-window:
 #+begin_src emacs-lisp
 (map! :desc "ace-window" :ne "SPC v" #'ace-window)
 #+end_src
 
+** monocle-window
 From prot's dotEmacs. Defines a monocole layout similar to Tiling window managers.
 Currently the hyper-key(positioned at right ctrl on my xps-15) is used for window operations inside Emacs.
 In the future I might replace dwm with exwm and the super key can be handled by Emacs in the X11 layer.
@@ -389,6 +415,12 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
 
 #+RESULTS:
 : prot/window-single-toggle
+** last-buffer
+#+begin_src emacs-lisp
+(map! :desc "ace-window" :ne "SPC j" #'evil-switch-to-windows-last-buffer)
+#+end_src
+
+#+RESULTS:
 
 * browser
 ** default browser
@@ -777,3 +809,11 @@ For unknown reason, ivy-posframe doesn't function normally after doom reloads. S
 #+end_src
 
 #+RESULTS:
+** time, battery
+#+begin_src emacs-lisp
+(display-time-mode)
+(display-battery-mode)
+#+end_src
+
+#+RESULTS:
+: t

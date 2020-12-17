@@ -31,8 +31,6 @@
   (add-to-list 'org-modules 'org-habit)
   )
 
-(setq org-roam-directory "~/org-roam")
-
 (map! :desc "capture!" :ne "C-c c" #'org-capture)
 
 (setq org-capture-templates
@@ -54,6 +52,8 @@
           ;; Uses the basename from `+org-capture-todo-file',
           ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
 ))
+
+(setq org-roam-directory "~/org-roam")
 
 (require 'helm-eshell)
 (add-hook 'eshell-mode-hook
@@ -225,3 +225,6 @@ Version 2019-11-04"
 (map! :desc "toggle olivetti-mode" :ne "SPC o v" #'olivetti-mode)
 
 (setq-default global-hl-line-mode nil)
+
+(display-time-mode)
+(display-battery-mode)
