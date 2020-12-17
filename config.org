@@ -95,16 +95,14 @@ The package provides good-looking icons before level headings.
 #+begin_src emacs-lisp
 (map! :desc "capture!" :ne "C-c c" #'org-capture)
 #+end_src
-Emacs style keybinding are preferred over vim style keybinding in quick capturing.
+Emacs-style keybinding are preferred over vim-style keybinding in quick capturing:
 |---------+----------|
 | key     | function |
 |---------+----------|
 | C-c C-d | deadline |
 | C-c C-s | schedule |
 |---------+----------|
-
-As these are already fast enough, it's not considered necessary to expand the template tree and include schedules or deadline in some non-root template.
-
+As these are already fast enough, it's not considered necessary to include schedules or deadline in some template that require more than 1 keystroke.
 *** templates
 Expansions:
 |----------------------------+-------------------------------------|
