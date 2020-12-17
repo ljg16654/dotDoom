@@ -158,6 +158,10 @@ Version 2019-11-04"
 
 (setq matlab-shell-command "/usr/local/MATLAB/R2020a/bin/matlab")
 
+(map! :desc "toggle olivetti-mode" :ne "SPC o v" #'olivetti-mode)
+
+(setq-default global-hl-line-mode nil)
+
 (map! :desc "ace-window" :ne "SPC v" #'ace-window)
 
 (use-package emacs

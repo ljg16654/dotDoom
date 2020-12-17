@@ -80,7 +80,6 @@ The package provides good-looking icons before level headings.
 (setq org-roam-directory "~/org-roam")
 #+end_src
 
-
 ** TODO support for pdf and eps images
 #+begin_src emacs-lisp :tangle nil
 ;; Suggested on the org-mode maillist by Julian Burgos
@@ -93,6 +92,102 @@ The package provides good-looking icons before level headings.
 #+end_src
 ** TODO LaTeX export support for minted env
 ** TODO shortkey for =sparse-tree=. =SPC / *= currently occupied by =rg=.
+** org-capture
+*** templates
+
+|--------+--------------------------|
+| symbol | expansion                |
+|--------+--------------------------|
+| %a     | current buffer position? |
+|--------+--------------------------|
+
+doom default config
+#+begin_src emacs-lisp :tangle nil
+(setq org-capture-templates
+        '(("t" "Personal todo" entry
+           (file+headline +org-capture-todo-file "Inbox")
+           "* %?\n \n" :prepend t)
+          ("n" "Personal notes" entry
+           (file+headline +org-capture-notes-file "Inbox")
+           "* %u %?\n%i\n%a" :prepend t)
+          ("j" "Journal" entry
+           (file+olp+datetree +org-capture-journal-file)
+           "* %U %?\n%i\n%a" :prepend t)
+          ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
+          ;; {todo,notes,changelog}.org file is found in a parent directory.
+          ;; Uses the basename from `+org-capture-todo-file',
+          ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
+          ("p" "Templates for projects")
+          ("pt" "Project-local todo" entry  ; {project-root}/todo.org
+           (file+headline +org-capture-project-todo-file "Inbox")
+           "* TODO %?\n%i\n%a" :prepend t)
+          ("pn" "Project-local notes" entry  ; {project-root}/notes.org
+           (file+headline +org-capture-project-notes-file "Inbox")
+           "* %U %?\n%i\n%a" :prepend t)
+          ("pc" "Project-local changelog" entry  ; {project-root}/changelog.org
+           (file+headline +org-capture-project-changelog-file "Unreleased")
+           "* %U %?\n%i\n%a" :prepend t)
+
+          ;; Will use {org-directory}/{+org-capture-projects-file} and store
+          ;; these under {ProjectName}/{Tasks,Notes,Changelog} headings. They
+          ;; support `:parents' to specify what headings to put them under, e.g.
+          ;; :parents ("Projects")
+          ("o" "Centralized templates for projects")
+          ("ot" "Project todo" entry
+           (function +org-capture-central-project-todo-file)
+           "* TODO %?\n %i\n %a"
+           :heading "Tasks"
+           :prepend nil)
+          ("on" "Project notes" entry
+           (function +org-capture-central-project-notes-file)
+           "* %U %?\n %i\n %a"
+           :heading "Notes"
+           :prepend t)
+          ("oc" "Project changelog" entry
+           (function +org-capture-central-project-changelog-file)
+           "* %U %?\n %i\n %a"
+           :heading "Changelog"
+           :prepend t)))
+#+end_src
+
+#+RESULTS:
+| t | Personal todo | entry | (file+headline +org-capture-todo-file Inbox) | * %? |
+
+prot's config
+#+begin_src emacs-lisp :tangle nil
+  (setq org-capture-templates
+        (append org-capture-templates
+        `(("a" "Article to write" entry
+           (file+headline "tasks.org" "Writing list")
+           ,(concat "* WRITE %^{Title} %^g\n"
+                    "SCHEDULED: %^t\n"
+                    ":PROPERTIES:\n"
+                    ":CAPTURED: %U\n:END:\n\n"
+                    "%i%?"))
+          ("b" "Basic task for future review" entry
+           (file+headline "tasks.org" "Basic tasks that need to be reviewed")
+           ,(concat "* %^{Title}\n"
+                    ":PROPERTIES:\n"
+                    ":CAPTURED: %U\n"
+                    ":END:\n\n"
+                    "%i%l"))
+          ;; ("t" "Task with a due date" entry
+          ;;  (file+headline "tasks.org" "Task list with a date")
+          ;;  ,(concat "* %^{Scope of task||TODO|STUDY|MEET} %^{Title} %^g\n"
+          ;;           "SCHEDULED: %^t\n"
+          ;;           ":PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
+          ;;           "%i%?"))
+          ("r" "Reply to an email" entry
+           (file+headline "tasks.org" "Mail correspondence")
+           ,(concat "* TODO [#B] %:subject :mail:\n"
+                    "SCHEDULED: %t\n:"
+                    "PROPERTIES:\n:CONTEXT: %a\n:END:\n\n"
+                    "%i%?")))))
+#+end_src
+
+#+RESULTS:
+| (a Article to write entry (file+headline tasks.org Writing list) * WRITE %^{Title} %^g |
+
 * helm
 ** helm-eshell
 #+begin_src emacs-lisp
@@ -327,6 +422,7 @@ Disable line number by default.
 #+RESULTS:
 | nolinum | overseer-enable-mode | doom--setq-lisp-indent-function-for-emacs-lisp-mode-h | doom--setq-outline-regexp-for-emacs-lisp-mode-h | doom--setq-mode-name-for-emacs-lisp-mode-h | doom--setq-tab-width-for-emacs-lisp-mode-h | outline-minor-mode | rainbow-delimiters-mode | highlight-quoted-mode | +emacs-lisp-extend-imenu-h | +emacs-lisp-init-straight-maybe-h | doom--enable-+emacs-lisp-ert-mode-in-emacs-lisp-mode-h | parinfer-mode | lispy-mode | +evil-embrace-lisp-mode-hook-h | embrace-emacs-lisp-mode-hook |
 
+
 ** dashboard
 #+begin_src emacs-lisp :tangle nil
 (require 'dashboard)
@@ -379,6 +475,13 @@ For unknown reason, ivy-posframe doesn't function normally after doom reloads. S
 ** focused-editing
 #+begin_src emacs-lisp
 (map! :desc "toggle olivetti-mode" :ne "SPC o v" #'olivetti-mode)
+#+end_src
+
+#+RESULTS:
+
+** hl-line-mode
+#+begin_src emacs-lisp
+(setq-default global-hl-line-mode nil)
 #+end_src
 
 #+RESULTS:
@@ -532,3 +635,116 @@ export https_proxy="http://127.0.0.1:12333"
 
   (exwm-enable))
 #+end_src
+* window rule
+#+begin_src emacs-lisp :tangle nil
+(use-package window
+  :init
+  (setq display-buffer-alist
+        '(;; top side window
+          ("\\*Bongo-Elfeed Queue.*"
+           (display-buffer-reuse-window display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . top)
+           (slot . -2))
+          ("\\*\\(elfeed-mpv-output\\|world-clock\\).*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . top)
+           (slot . -1))
+          ("\\*\\(Flymake\\|Package-Lint\\|vc-git :\\).*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . top)
+           (slot . 0)
+           (window-parameters . ((no-other-window . t))))
+          ("\\*Messages.*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . top)
+           (slot . 1)
+           (window-parameters . ((no-other-window . t))))
+          ("\\*\\(Backtrace\\|Warnings\\|Compile-Log\\)\\*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . top)
+           (slot . 2)
+           (window-parameters . ((no-other-window . t))))
+          ;; bottom side window
+          ("\\*\\(Output\\|Register Preview\\).*"
+           (display-buffer-in-side-window)
+           (window-width . 0.16)       ; See the :hook
+           (side . bottom)
+           (slot . -1)
+           (window-parameters . ((no-other-window . t))))
+          ("\\*\\(Completions\\|Embark Live Occur\\).*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . bottom)
+           (slot . 0)
+           (window-parameters . ((no-other-window . t))))
+          (".*\\(e?shell\\|vterm\\).*"
+           (display-buffer-in-side-window)
+           (window-height . 0.16)
+           (side . bottom)
+           (slot . 1))
+          ;; left side window
+          ("\\*Help.*"
+           (display-buffer-in-side-window)
+           (window-width . 0.20)       ; See the :hook
+           (side . left)
+           (slot . 0)
+           (window-parameters . ((no-other-window . t))))
+          ;; right side window
+          ("\\*Faces\\*"
+           (display-buffer-in-side-window)
+           (window-width . 0.25)
+           (side . right)
+           (slot . 0)
+           (window-parameters
+            . ((no-other-window . t)
+               (mode-line-format
+                . (" "
+                   mode-line-buffer-identification)))))
+          ("\\*Custom.*"
+           (display-buffer-in-side-window)
+           (window-width . 0.25)
+           (side . right)
+           (slot . 1))
+          ;; bottom buffer (NOT side window)
+          ("\\*\\vc-\\(incoming\\|outgoing\\).*"
+           (display-buffer-at-bottom))))
+  (setq window-combination-resize t)
+  (setq even-window-sizes 'height-only)
+  (setq window-sides-vertical nil)
+  (setq switch-to-buffer-in-dedicated-window 'pop)
+  ;; Hooks' syntax is controlled by the `use-package-hook-name-suffix'
+  ;; variable.  The "-hook" suffix is intentional.
+  :hook ((help-mode-hook . visual-line-mode)
+         (custom-mode-hook . visual-line-mode))
+  :bind (("s-n" . next-buffer)
+         ("s-p" . previous-buffer)
+         ("s-o" . other-window)
+         ("s-2" . split-window-below)
+         ("s-3" . split-window-right)
+         ("s-0" . delete-window)
+         ("s-1" . delete-other-windows)
+         ("s-5" . delete-frame)
+         ("C-x _" . balance-windows)
+         ("C-x +" . balance-windows-area)
+         ("s-q" . window-toggle-side-windows)))
+#+end_src
+
+Learnt from prot's [[https://www.youtube.com/watch?v=rjOhJMbA-q0&t=512s][video on window rules]]. Open current buffer in a new frame and delete the original window.
+This can be very useful when the space for a compilmentary buffer (e.g. *info*) is not large enough.
+#+begin_src emacs-lisp
+(defun prot/make-frame-floating-with-current-buffer ()
+  (interactive)
+  (make-frame '((name . "脱出")
+              (window-system . x)
+              (minibuffer . nil)))
+  (delete-window))
+
+  (map! :desc "make floating frame" :ne "H-f" #'prot/make-frame-floating-with-current-buffer)
+#+end_src
+
+#+RESULTS:
