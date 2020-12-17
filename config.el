@@ -36,24 +36,28 @@
 (setq org-capture-templates
         '(("t" "Personal t" entry
            (file+headline +org-capture-todo-file "Inbox")
-           "* TODO [%^{Select the urgency|A|B|C}] %?\n%i\n%a\n" :prepend t)
+              "* TODO [%^{Select the urgency|A|B|C}] %?\n%i\n%a\n" :prepend t)
+
           ("n" "Personal notes" entry
            (file+headline +org-capture-notes-file "Inbox")
-           "* %u %?\n%i\n%a" :prepend t)
+              "* %u %?\n%i\n%a" :prepend t)
+
+          ;; declare root node j
           ("j" "Journal")
+
           ("ja" "Journal arbitrary recording" entry
            (file+olp+datetree +org-capture-journal-file)
-              "* %?\n%u\n%i" :append t)
-          ("jb" "Journal including the current buffer" entry
+              "* %?\n%u\n%i")
+
+          ("jc" "journal clock into something new" entry
            (file+olp+datetree +org-capture-journal-file)
-              "* %?\n%u\n%i\n%a" :append t)
-          ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
-          ;; {todo,notes,changelog}.org file is found in a parent directory.
-          ;; Uses the basename from `+org-capture-todo-file',
-          ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
+              "* %?" :clock-in t :clock-keep t)
 ))
 
 (setq org-roam-directory "~/org-roam")
+
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
 
 (require 'helm-eshell)
 (add-hook 'eshell-mode-hook
@@ -100,7 +104,11 @@
   "Open Downloads folder."
   (find-file "~/Downloads"))
 
+(defun go-home () (interactive)
+       "Open home directory."
+       (find-file "~/"))
 (map! :desc "goto-downloads" :ne "SPC d d" #'goto-downloads)
+(map! :desc "goto-home" :ne "SPC d h" #'go-home)
 (map! :desc "peep-dired" :ne "SPC d p" #'peep-dired)
 
 (map! :desc "ace-window" :ne "SPC v" #'ace-window)
@@ -123,6 +131,8 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
       (setq prot/window-configuration (current-window-configuration))
       (delete-other-windows)))
   :bind ("s-s" . prot/window-single-toggle))
+
+(map! :desc "ace-window" :ne "SPC j" #'evil-switch-to-windows-last-buffer)
 
 (setq browse-url-browser-function 'browse-url-firefox)
 

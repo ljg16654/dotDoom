@@ -142,6 +142,7 @@ A few words to explain the "jc" template: =:clock-in= property starts timing whe
            (file+headline +org-capture-notes-file "Inbox")
               "* %u %?\n%i\n%a" :prepend t)
 
+          ;; declare root node j
           ("j" "Journal")
 
           ("ja" "Journal arbitrary recording" entry
@@ -150,11 +151,7 @@ A few words to explain the "jc" template: =:clock-in= property starts timing whe
 
           ("jc" "journal clock into something new" entry
            (file+olp+datetree +org-capture-journal-file)
-              "* %?\n%u" :clock-in t :clock-keep t)
-          ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
-          ;; {todo,notes,changelog}.org file is found in a parent directory.
-          ;; Uses the basename from `+org-capture-todo-file',
-          ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
+              "* %?" :clock-in t :clock-keep t)
 ))
 #+end_src
 
@@ -164,6 +161,10 @@ A few words to explain the "jc" template: =:clock-in= property starts timing whe
 *** templates for reference
 Doom provides a list of project-oriented capture templates but I don 't want to use them right now
 #+begin_src emacs-lisp :tangle nil
+          ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
+          ;; {todo,notes,changelog}.org file is found in a parent directory.
+          ;; Uses the basename from `+org-capture-todo-file',
+          ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
 '(("p" "Templates for projects")
           ("pt" "Project-local todo" entry  ; {project-root}/todo.org
            (file+headline +org-capture-project-todo-file "Inbox")
@@ -240,6 +241,16 @@ From prot's config on Dec 17 2020 :
 *** templates
 ***** TODO wrap active region in source clock block
 ***** TODO insert current buffer location like =org-capture=
+** clock
+To save the clock history across Emacs sessions, use:
+#+begin_src emacs-lisp
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
+#+end_src
+
+#+RESULTS:
+| org-clock-save | eshell-save-some-history | eshell-save-some-last-dir | bookmark-exit-hook-internal | amx-save-to-file | flycheck-global-teardown | save-place-kill-emacs-hook | recentf-save-list | savehist-autosave | org-roam-db--close-all | org-id-locations-save | org-babel-remove-temporary-directory | transient-maybe-save-history | recentf-cleanup | keyfreq-mustsave--do | emms-score-save-hash | emms-cache-save | emms-history-save | doom-cleanup-project-cache-h | lsp--global-teardown | doom-persist-scratch-buffers-h | server-force-stop |
+
 * helm
 ** helm-eshell
 #+begin_src emacs-lisp
@@ -362,12 +373,15 @@ The configuration is currently disabled because of its slowliness.
   "Open Downloads folder."
   (find-file "~/Downloads"))
 
+(defun go-home () (interactive)
+       "Open home directory."
+       (find-file "~/"))
 (map! :desc "goto-downloads" :ne "SPC d d" #'goto-downloads)
+(map! :desc "goto-home" :ne "SPC d h" #'go-home)
 (map! :desc "peep-dired" :ne "SPC d p" #'peep-dired)
 #+end_src
 
 #+RESULTS:
-: goto-download
 
 ** TODO uncompress/unzip
 * eshell
