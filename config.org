@@ -71,16 +71,10 @@ The package provides good-looking icons before level headings.
   )
 
 #+end_src
-
 #+RESULTS:
 | org-habit | ol-bibtex |
-
-*** org-roam
-#+begin_src emacs-lisp
-(setq org-roam-directory "~/org-roam")
-#+end_src
-
-** TODO support for pdf and eps images
+** image/doc
+*** TODO support for pdf and eps images
 #+begin_src emacs-lisp :tangle nil
 ;; Suggested on the org-mode maillist by Julian Burgos
 (add-to-list 'image-file-name-extensions "pdf")
@@ -90,8 +84,10 @@ The package provides good-looking icons before level headings.
 (add-to-list 'image-type-file-name-regexps '("\\.pdf\\'" . imagemagick))
 (add-to-list 'image-file-name-extensions "pdf")
 #+end_src
-** TODO LaTeX export support for minted env
+** latex
+*** TODO LaTeX export support for minted env
 ** org-capture
+*** basic settings
 #+begin_src emacs-lisp
 (map! :desc "capture!" :ne "C-c c" #'org-capture)
 #+end_src
@@ -103,7 +99,7 @@ Emacs-style keybinding are preferred over vim-style keybinding in quick capturin
 | C-c C-s | schedule |
 |---------+----------|
 As these are already fast enough, it's not considered necessary to include schedules or deadline in some template that require more than 1 keystroke.
-*** templates
+*** TODO templates: add learning-centralized template
 Expansions:
 |----------------------------+-------------------------------------|
 | symbol                     | expansion                           |
@@ -119,11 +115,7 @@ Expansions:
 | %^g                        |                                     |
 |----------------------------+-------------------------------------|
 
-Mostly copied from doom default config:
 [[file:~/.emacs.d/modules/lang/org/config.el::org-capture-templates]]
-
-#+RESULTS:
-
 #+begin_src emacs-lisp
 (setq org-capture-templates
         '(("t" "Personal t" entry
@@ -145,10 +137,7 @@ Mostly copied from doom default config:
           ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
 ))
 #+end_src
-
-#+RESULTS:
-| t | Personal t | entry | (file+headline +org-capture-todo-file Inbox) | * TODO [%^{Select the urgency | A | B | C}] %? |
-
+*** templates for reference
 Doom provides a list of project-oriented capture templates but I don 't want to use them right now
 #+begin_src emacs-lisp :tangle nil
 '(("p" "Templates for projects")
@@ -219,6 +208,14 @@ From prot's config on Dec 17 2020 :
 #+RESULTS:
 | (a Article to write entry (file+headline tasks.org Writing list) * WRITE %^{Title} %^g |
 
+** org-roam
+*** basic settings
+#+begin_src emacs-lisp
+(setq org-roam-directory "~/org-roam")
+#+end_src
+*** templates
+***** TODO wrap active region in source clock block
+***** TODO insert current buffer location like =org-capture=
 * helm
 ** helm-eshell
 #+begin_src emacs-lisp
