@@ -27,8 +27,8 @@ The currently preferred monospace fonts are
 + Fira mono
 + iconsolata
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "Monaco for Powerline" :size 38 :weight 'light)
-      doom-variable-pitch-font (font-spec :family "GentiumAlt" :size 42)
+(setq doom-font (font-spec :family "Monaco for Powerline" :size 34 :weight 'light)
+      doom-variable-pitch-font (font-spec :family "GentiumAlt" :size 38)
       )
 (setq-default line-spacing 0.5)
 #+end_src
@@ -92,31 +92,68 @@ The package provides good-looking icons before level headings.
 #+end_src
 ** TODO LaTeX export support for minted env
 ** org-capture
-*** templates
-Under test.
-|--------+--------------------------|
-| symbol | expansion                |
-|--------+--------------------------|
-| %a     | current buffer position? |
-|--------+--------------------------|
+#+begin_src emacs-lisp
+(map! :desc "capture!" :ne "C-c c" #'org-capture)
+#+end_src
+Emacs style keybinding are preferred over vim style keybinding in quick capturing.
+|---------+----------|
+| key     | function |
+|---------+----------|
+| C-c C-d | deadline |
+| C-c C-s | schedule |
+|---------+----------|
 
-doom default config
-#+begin_src emacs-lisp :tangle nil
+As these are already fast enough, it's not considered necessary to expand the template tree and include schedules or deadline in some non-root template.
+
+*** templates
+Expansions:
+|----------------------------+-------------------------------------|
+| symbol                     | expansion                           |
+|----------------------------+-------------------------------------|
+| %a                         | current buffer position?            |
+| %t                         | time                                |
+| %^t                        | prompt for time with popup calender |
+| %i                         | &optional active region             |
+| %{description and options} | prompt for an option                |
+| \n                         | eol                                 |
+| %?                         | cursor location                     |
+| %U                         |                                     |
+| %^g                        |                                     |
+|----------------------------+-------------------------------------|
+
+Mostly copied from doom default config:
+[[file:~/.emacs.d/modules/lang/org/config.el::org-capture-templates]]
+
+#+RESULTS:
+
+#+begin_src emacs-lisp
 (setq org-capture-templates
-        '(("t" "Personal todo" entry
+        '(("t" "Personal t" entry
            (file+headline +org-capture-todo-file "Inbox")
-           "* %?\n \n" :prepend t)
+           "* TODO [%^{Select the urgency|A|B|C}] %?\n%i\n%a\n" :prepend t)
           ("n" "Personal notes" entry
            (file+headline +org-capture-notes-file "Inbox")
            "* %u %?\n%i\n%a" :prepend t)
-          ("j" "Journal" entry
+          ("j" "Journal")
+          ("ja" "Journal arbitrary recording" entry
            (file+olp+datetree +org-capture-journal-file)
-           "* %U %?\n%i\n%a" :prepend t)
+              "* %?\n%u\n%i" :append t)
+          ("jb" "Journal including the current buffer" entry
+           (file+olp+datetree +org-capture-journal-file)
+              "* %?\n%u\n%i\n%a" :append t)
           ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
           ;; {todo,notes,changelog}.org file is found in a parent directory.
           ;; Uses the basename from `+org-capture-todo-file',
           ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
-          ("p" "Templates for projects")
+))
+#+end_src
+
+#+RESULTS:
+| t | Personal t | entry | (file+headline +org-capture-todo-file Inbox) | * TODO [%^{Select the urgency | A | B | C}] %? |
+
+Doom provides a list of project-oriented capture templates but I don 't want to use them right now
+#+begin_src emacs-lisp :tangle nil
+'(("p" "Templates for projects")
           ("pt" "Project-local todo" entry  ; {project-root}/todo.org
            (file+headline +org-capture-project-todo-file "Inbox")
            "* TODO %?\n%i\n%a" :prepend t)
@@ -146,13 +183,10 @@ doom default config
            (function +org-capture-central-project-changelog-file)
            "* %U %?\n %i\n %a"
            :heading "Changelog"
-           :prepend t)))
+           :prepend t))
 #+end_src
 
-#+RESULTS:
-| t | Personal todo | entry | (file+headline +org-capture-todo-file Inbox) | * %? |
-
-prot's config
+From prot's config on Dec 17 2020 :
 #+begin_src emacs-lisp :tangle nil
   (setq org-capture-templates
         (append org-capture-templates
@@ -328,169 +362,6 @@ The configuration is currently disabled because of its slowliness.
   )
 )
 #+end_src
-* miscellaneous
-** open in external app
-#+begin_src emacs-lisp
-(defun xah-open-in-external-app (&optional @fname)
-  "Open the current file or dired marked files in external app.
-The app is chosen from your OS's preference.
-
-When called in emacs lisp, if @fname is given, open that.
-
-URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
-Version 2019-11-04"
-  (interactive)
-  (let* (
-         ($file-list
-          (if @fname
-              (progn (list @fname))
-            (if (string-equal major-mode "dired-mode")
-                (dired-get-marked-files)
-              (list (buffer-file-name)))))
-         ($do-it-p (if (<= (length $file-list) 5)
-                       t
-                     (y-or-n-p "Open more than 5 files? "))))
-    (when $do-it-p
-      (cond
-       ((string-equal system-type "windows-nt")
-        (mapc
-         (lambda ($fpath)
-           (w32-shell-execute "open" $fpath)) $file-list))
-       ((string-equal system-type "darwin")
-        (mapc
-         (lambda ($fpath)
-           (shell-command
-            (concat "open " (shell-quote-argument $fpath))))  $file-list))
-       ((string-equal system-type "gnu/linux")
-        (mapc
-         (lambda ($fpath) (let ((process-connection-type nil))
-                            (start-process "" nil "xdg-open" $fpath))) $file-list))))))
-
-(map! :desc "Open in external app" :ne "SPC e o" #'xah-open-in-external-app)
-#+end_src
-
-** transparency
-Interactively toggle transparency in winframe.
-#+begin_src emacs-lisp
-(defun transparency (value)
-  "sets the transparency of the frame window. 0=transparent/100=opaque"
-  (interactive "ntransparency value 0 - 100 opaque:")
-  (set-frame-parameter (selected-frame) 'alpha value))
-#+end_src
-** cursor in =-nw= mode
-#+begin_src emacs-lisp
-(unless (display-graphic-p)
-        (require 'evil-terminal-cursor-changer)
-        (evil-terminal-cursor-changer-activate) ; or (etcc-on)
-        )
-#+end_src
-** dynamics module support
-#+begin_src emacs-lisp
-(setq module-file-suffix t)
-#+end_src
-** keyfreq stat
-#+begin_src emacs-lisp
-(keyfreq-mode 1)
-(keyfreq-autosave-mode 1)
-#+end_src
-** disable backup/auto save
-#+begin_src emacs-lisp
-;disable backup
-(setq backup-inhibited t)
-;disable auto save
-(setq auto-save-default nil)
-#+end_src
-** line number
-Shortkey for toggling line numbers:
-#+begin_src emacs-lisp
-(map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
-#+end_src
-
-Disable line number by default.
-#+begin_src emacs-lisp
-(defun nolinum ()
-  (display-line-numbers-mode 0)
-  (olivetti-mode 1)
-  )
-
-(defun viper-lisp-mode ()
-  (display-line-numbers-mode 0)
-  (olivetti-mode 1)
-  (paren-face-mode 1)
-  (rainbow-delimiters-mode 0)
-  (paredit-mode)
-  (lispy-mode))
-(add-hook 'org-mode-hook 'nolinum)
-(add-hook 'lisp-mode-hook 'viper-lisp-mode)
-(add-hook 'emacs-lisp-mode-hook 'viper-lisp-mode)
-#+end_src
-
-#+RESULTS:
-| nolinum | overseer-enable-mode | doom--setq-lisp-indent-function-for-emacs-lisp-mode-h | doom--setq-outline-regexp-for-emacs-lisp-mode-h | doom--setq-mode-name-for-emacs-lisp-mode-h | doom--setq-tab-width-for-emacs-lisp-mode-h | outline-minor-mode | rainbow-delimiters-mode | highlight-quoted-mode | +emacs-lisp-extend-imenu-h | +emacs-lisp-init-straight-maybe-h | doom--enable-+emacs-lisp-ert-mode-in-emacs-lisp-mode-h | parinfer-mode | lispy-mode | +evil-embrace-lisp-mode-hook-h | embrace-emacs-lisp-mode-hook |
-
-** dashboard and init buffer
-#+begin_src emacs-lisp :tangle nil
-(require 'dashboard)
-(dashboard-setup-startup-hook)
-;; Or if you use use-package
-(use-package dashboard
-  :ensure t
-  :config
-  (dashboard-setup-startup-hook))
-(setq dashboard-banner-logo-title "迟早会完蛋。")
-(setq dashboard-items '((projects . 10)
-                        (agenda . 10)))
-
-(setq dashboard-set-init-info nil)
-(setq dashboard-set-footer nil)
-;;(setq dashboard-footer-messages '("迟早会完蛋。")
-;;                                '("The big brother is watching you."))
-#+end_src
-
-#+RESULTS:
-The init buffer is annoying when running emacsclient in terminal.
-Scratch buffer is good enough.
-#+begin_src emacs-lisp :tangle nil
-(setq initial-buffer-choice "~/.doom.d/Splash.org")
-#+end_src
-** ivy-posframe
-For unknown reason, ivy-posframe doesn't function normally after doom reloads. Such bug occurred after I upgraded to Emacs28/gccemacs and till now I haven't managed to find a solution to it.
-#+begin_src emacs-lisp :tangle nil
-(require 'ivy-posframe)
-;; display at `ivy-posframe-style'
-(setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
-(setq ivy-posframe-parameters
-      '((left-fringe . 8)
-        (right-fringe . 8)))
-(ivy-posframe-mode 1)
-#+end_src
-
-[[https://github.com/hlissner/doom-emacs/issues/2322][solution]]
-#+begin_src emacs-lisp :tangle nil
-(add-hook! 'doom-reload-hook #'posframe-delete-all)
-#+end_src
-** matlab-mode
-#+begin_src emacs-lisp
-(setq matlab-shell-command "/usr/local/MATLAB/R2020a/bin/matlab")
-#+end_src
-
-#+RESULTS:
-: /usr/local/MATLAB/R2020a/bin/matlab
-
-** focused-editing
-#+begin_src emacs-lisp
-(map! :desc "toggle olivetti-mode" :ne "SPC o v" #'olivetti-mode)
-#+end_src
-
-#+RESULTS:
-
-** hl-line-mode
-#+begin_src emacs-lisp
-(setq-default global-hl-line-mode nil)
-#+end_src
-
-#+RESULTS:
-
 * window/buffer management
 Shortkey for ace-window:
 #+begin_src emacs-lisp
@@ -746,6 +617,168 @@ This can be very useful when the space for a compilmentary buffer (e.g. *info*) 
   (delete-window))
 
   (map! :desc "make floating frame" :ne "H-f" #'prot/make-frame-floating-with-current-buffer)
+#+end_src
+
+#+RESULTS:
+* miscellaneous
+** open in external app
+#+begin_src emacs-lisp
+(defun xah-open-in-external-app (&optional @fname)
+  "Open the current file or dired marked files in external app.
+The app is chosen from your OS's preference.
+
+When called in emacs lisp, if @fname is given, open that.
+
+URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
+Version 2019-11-04"
+  (interactive)
+  (let* (
+         ($file-list
+          (if @fname
+              (progn (list @fname))
+            (if (string-equal major-mode "dired-mode")
+                (dired-get-marked-files)
+              (list (buffer-file-name)))))
+         ($do-it-p (if (<= (length $file-list) 5)
+                       t
+                     (y-or-n-p "Open more than 5 files? "))))
+    (when $do-it-p
+      (cond
+       ((string-equal system-type "windows-nt")
+        (mapc
+         (lambda ($fpath)
+           (w32-shell-execute "open" $fpath)) $file-list))
+       ((string-equal system-type "darwin")
+        (mapc
+         (lambda ($fpath)
+           (shell-command
+            (concat "open " (shell-quote-argument $fpath))))  $file-list))
+       ((string-equal system-type "gnu/linux")
+        (mapc
+         (lambda ($fpath) (let ((process-connection-type nil))
+                            (start-process "" nil "xdg-open" $fpath))) $file-list))))))
+
+(map! :desc "Open in external app" :ne "SPC e o" #'xah-open-in-external-app)
+#+end_src
+
+** transparency
+Interactively toggle transparency in winframe.
+#+begin_src emacs-lisp
+(defun transparency (value)
+  "sets the transparency of the frame window. 0=transparent/100=opaque"
+  (interactive "ntransparency value 0 - 100 opaque:")
+  (set-frame-parameter (selected-frame) 'alpha value))
+#+end_src
+** cursor in =-nw= mode
+#+begin_src emacs-lisp
+(unless (display-graphic-p)
+        (require 'evil-terminal-cursor-changer)
+        (evil-terminal-cursor-changer-activate) ; or (etcc-on)
+        )
+#+end_src
+** dynamics module support
+#+begin_src emacs-lisp
+(setq module-file-suffix t)
+#+end_src
+** keyfreq stat
+#+begin_src emacs-lisp
+(keyfreq-mode 1)
+(keyfreq-autosave-mode 1)
+#+end_src
+** disable backup/auto save
+#+begin_src emacs-lisp
+;disable backup
+(setq backup-inhibited t)
+;disable auto save
+(setq auto-save-default nil)
+#+end_src
+** line number
+Shortkey for toggling line numbers:
+#+begin_src emacs-lisp
+(map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
+#+end_src
+
+Disable line number by default.
+#+begin_src emacs-lisp
+(defun nolinum ()
+  (display-line-numbers-mode 0)
+  (olivetti-mode 1)
+  )
+
+(defun viper-lisp-mode ()
+  (display-line-numbers-mode 0)
+  (olivetti-mode 1)
+  (paren-face-mode 1)
+  (rainbow-delimiters-mode 0)
+  (paredit-mode)
+  (lispy-mode))
+(add-hook 'org-mode-hook 'nolinum)
+(add-hook 'lisp-mode-hook 'viper-lisp-mode)
+(add-hook 'emacs-lisp-mode-hook 'viper-lisp-mode)
+#+end_src
+
+#+RESULTS:
+| nolinum | overseer-enable-mode | doom--setq-lisp-indent-function-for-emacs-lisp-mode-h | doom--setq-outline-regexp-for-emacs-lisp-mode-h | doom--setq-mode-name-for-emacs-lisp-mode-h | doom--setq-tab-width-for-emacs-lisp-mode-h | outline-minor-mode | rainbow-delimiters-mode | highlight-quoted-mode | +emacs-lisp-extend-imenu-h | +emacs-lisp-init-straight-maybe-h | doom--enable-+emacs-lisp-ert-mode-in-emacs-lisp-mode-h | parinfer-mode | lispy-mode | +evil-embrace-lisp-mode-hook-h | embrace-emacs-lisp-mode-hook |
+
+** dashboard and init buffer
+#+begin_src emacs-lisp :tangle nil
+(require 'dashboard)
+(dashboard-setup-startup-hook)
+;; Or if you use use-package
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+(setq dashboard-banner-logo-title "迟早会完蛋。")
+(setq dashboard-items '((projects . 10)
+                        (agenda . 10)))
+
+(setq dashboard-set-init-info nil)
+(setq dashboard-set-footer nil)
+;;(setq dashboard-footer-messages '("迟早会完蛋。")
+;;                                '("The big brother is watching you."))
+#+end_src
+
+#+RESULTS:
+The init buffer is annoying when running emacsclient in terminal.
+Scratch buffer is good enough.
+#+begin_src emacs-lisp :tangle nil
+(setq initial-buffer-choice "~/.doom.d/Splash.org")
+#+end_src
+** ivy-posframe
+For unknown reason, ivy-posframe doesn't function normally after doom reloads. Such bug occurred after I upgraded to Emacs28/gccemacs and till now I haven't managed to find a solution to it.
+#+begin_src emacs-lisp :tangle nil
+(require 'ivy-posframe)
+;; display at `ivy-posframe-style'
+(setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-window-center)))
+(setq ivy-posframe-parameters
+      '((left-fringe . 8)
+        (right-fringe . 8)))
+(ivy-posframe-mode 1)
+#+end_src
+
+[[https://github.com/hlissner/doom-emacs/issues/2322][solution]]
+#+begin_src emacs-lisp :tangle nil
+(add-hook! 'doom-reload-hook #'posframe-delete-all)
+#+end_src
+** matlab-mode
+#+begin_src emacs-lisp
+(setq matlab-shell-command "/usr/local/MATLAB/R2020a/bin/matlab")
+#+end_src
+
+#+RESULTS:
+: /usr/local/MATLAB/R2020a/bin/matlab
+
+** focused-editing
+#+begin_src emacs-lisp
+(map! :desc "toggle olivetti-mode" :ne "SPC o v" #'olivetti-mode)
+#+end_src
+
+#+RESULTS:
+
+** hl-line-mode
+#+begin_src emacs-lisp
+(setq-default global-hl-line-mode nil)
 #+end_src
 
 #+RESULTS:

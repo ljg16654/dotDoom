@@ -2,8 +2,8 @@
       user-mail-address "ljg16654@sjtu.edu.cn"
 )
 
-(setq doom-font (font-spec :family "Monaco for Powerline" :size 38 :weight 'light)
-      doom-variable-pitch-font (font-spec :family "GentiumAlt" :size 42)
+(setq doom-font (font-spec :family "Monaco for Powerline" :size 34 :weight 'light)
+      doom-variable-pitch-font (font-spec :family "GentiumAlt" :size 38)
       )
 (setq-default line-spacing 0.5)
 
@@ -32,6 +32,28 @@
   )
 
 (setq org-roam-directory "~/org-roam")
+
+(map! :desc "capture!" :ne "C-c c" #'org-capture)
+
+(setq org-capture-templates
+        '(("t" "Personal t" entry
+           (file+headline +org-capture-todo-file "Inbox")
+           "* TODO [%^{Select the urgency|A|B|C}] %?\n%i\n%a\n" :prepend t)
+          ("n" "Personal notes" entry
+           (file+headline +org-capture-notes-file "Inbox")
+           "* %u %?\n%i\n%a" :prepend t)
+          ("j" "Journal")
+          ("ja" "Journal arbitrary recording" entry
+           (file+olp+datetree +org-capture-journal-file)
+              "* %?\n%u\n%i" :append t)
+          ("jb" "Journal including the current buffer" entry
+           (file+olp+datetree +org-capture-journal-file)
+              "* %?\n%u\n%i\n%a" :append t)
+          ;; Will use {project-root}/{todo,notes,changelog}.org, unless a
+          ;; {todo,notes,changelog}.org file is found in a parent directory.
+          ;; Uses the basename from `+org-capture-todo-file',
+          ;; `+org-capture-changelog-file' and `+org-capture-notes-file'.
+))
 
 (require 'helm-eshell)
 (add-hook 'eshell-mode-hook
@@ -80,6 +102,48 @@
 
 (map! :desc "goto-downloads" :ne "SPC d d" #'goto-downloads)
 (map! :desc "peep-dired" :ne "SPC d p" #'peep-dired)
+
+(map! :desc "ace-window" :ne "SPC v" #'ace-window)
+
+(use-package emacs
+  :config
+  (defvar prot/window-configuration nil
+    "Current window configuration.
+Intended for use by `prot/window-monocle'.")
+
+  (define-minor-mode prot/window-single-toggle
+    "Toggle between multiple windows and single window.
+This is the equivalent of maximising a window.  Tiling window
+managers such as DWM, BSPWM refer to this state as 'monocle'."
+    :lighter " [M]"
+    :global nil
+    (if (one-window-p)
+        (when prot/window-configuration
+          (set-window-configuration prot/window-configuration))
+      (setq prot/window-configuration (current-window-configuration))
+      (delete-other-windows)))
+  :bind ("s-s" . prot/window-single-toggle))
+
+(setq browse-url-browser-function 'browse-url-firefox)
+
+(load-theme 'doom-gruvbox-light t)
+
+(defun my-nov-font-setup ()
+  (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
+                           :height 1.5))
+(defun enlarge-left-fringe ()
+  (setq left-fringe-width 30))
+(add-hook 'nov-mode-hook 'my-nov-font-setup)
+(add-hook 'nov-mode-hook 'enlarge-left-fringe)
+
+(defun prot/make-frame-floating-with-current-buffer ()
+  (interactive)
+  (make-frame '((name . "脱出")
+              (window-system . x)
+              (minibuffer . nil)))
+  (delete-window))
+
+  (map! :desc "make floating frame" :ne "H-f" #'prot/make-frame-floating-with-current-buffer)
 
 (defun xah-open-in-external-app (&optional @fname)
   "Open the current file or dired marked files in external app.
@@ -138,6 +202,8 @@ Version 2019-11-04"
 ;disable auto save
 (setq auto-save-default nil)
 
+(map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
+
 (defun nolinum ()
   (display-line-numbers-mode 0)
   (olivetti-mode 1)
@@ -154,43 +220,8 @@ Version 2019-11-04"
 (add-hook 'lisp-mode-hook 'viper-lisp-mode)
 (add-hook 'emacs-lisp-mode-hook 'viper-lisp-mode)
 
-(setq browse-url-browser-function 'browse-url-firefox)
-
 (setq matlab-shell-command "/usr/local/MATLAB/R2020a/bin/matlab")
 
 (map! :desc "toggle olivetti-mode" :ne "SPC o v" #'olivetti-mode)
 
 (setq-default global-hl-line-mode nil)
-
-(map! :desc "ace-window" :ne "SPC v" #'ace-window)
-
-(use-package emacs
-  :config
-  (defvar prot/window-configuration nil
-    "Current window configuration.
-Intended for use by `prot/window-monocle'.")
-
-  (define-minor-mode prot/window-single-toggle
-    "Toggle between multiple windows and single window.
-This is the equivalent of maximising a window.  Tiling window
-managers such as DWM, BSPWM refer to this state as 'monocle'."
-    :lighter " [M]"
-    :global nil
-    (if (one-window-p)
-        (when prot/window-configuration
-          (set-window-configuration prot/window-configuration))
-      (setq prot/window-configuration (current-window-configuration))
-      (delete-other-windows)))
-  :bind ("s-s" . prot/window-single-toggle))
-
-(map! :desc "line-number" :ne "SPC l n" #'display-line-numbers-mode)
-
-(load-theme 'adwaita t)
-
-(defun my-nov-font-setup ()
-  (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
-                           :height 1.5))
-(defun enlarge-left-fringe ()
-  (setq left-fringe-width 30))
-(add-hook 'nov-mode-hook 'my-nov-font-setup)
-(add-hook 'nov-mode-hook 'enlarge-left-fringe)
