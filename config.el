@@ -30,6 +30,9 @@
   (add-to-list 'org-modules 'org-habit)
   )
 
+(defun org-latex-delete-cache () (interactive)
+       (delete-directory "~/.emacs.d/.local/cache/org-latex" :RECURSIVE t))
+
 (map! :desc "capture!" :ne "C-c c" #'org-capture)
 
 (setq org-capture-templates

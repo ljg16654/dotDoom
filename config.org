@@ -107,7 +107,7 @@ Emacs-style keybinding are preferred over vim-style keybinding in quick capturin
 | C-c C-s | schedule |
 |---------+----------|
 As these are already fast enough, it's not considered necessary to include schedules or deadline in some template that require more than 1 keystroke.
-*** TODO templates: add learning-centralized template
+*** TODO template: add learning-centralized template
 + Expansions:
 |----------------------------+----------------------------------------------|
 | symbol                     | expansion                                    |
@@ -155,11 +155,14 @@ A few words to explain the "jc" template: =:clock-in= property starts timing whe
 
           ("ja" "Journal arbitrary recording" entry
            (file+olp+datetree +org-capture-journal-file)
-              "* %?\n%u\n%i")
+              "* %?\n%u\n%i" :tree-type week)
 
           ("jc" "journal clock into something new" entry
            (file+olp+datetree +org-capture-journal-file)
-              "* %?" :clock-in t :clock-keep t)
+              "* %?" :clock-in t :clock-keep t :tree-type week)
+
+          ("jn" "journal edit the task currently clocked in" plain
+           (clock) "%?" :unnarrowed t)
 ))
 #+end_src
 
