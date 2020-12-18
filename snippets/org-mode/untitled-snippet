@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: ifi
-# uuid:
-# key: ifi
-# condition: t
-# --
-The plot of $1 relation is included in Figure [[$2]].

@@ -123,11 +123,13 @@ As these are already fast enough, it's not considered necessary to include sched
 | %^[gG]                     | prompt for tags, G being more powerful       |
 |----------------------------+----------------------------------------------|
 + Propreties:
-|---------------------------------------+-------------------------+---|
-| property                              | meaning                 |   |
-|---------------------------------------+-------------------------+---|
-| :prepend                              | add to beginning?       |   |
-| :clock-in, :clock-keep, :clock-resume | start clock in the item |   |
+|---------------------------------------+-------------------------|
+| property                              | meaning                 |
+|---------------------------------------+-------------------------|
+| :prepend                              | add to beginning?       |
+| :clock-in, :clock-keep, :clock-resume | start clock in the item |
+|---------------------------------------+-------------------------|
+
 [[file:~/.emacs.d/modules/lang/org/config.el::org-capture-templates]]
 
 =org-store-link=, binded to =SPC n l= by default, can store a link that can be later called by =org-insert-link=. Use such shortkey won't add much pressure and sometimes a link is not needed. Therefore, I prefer not to use =%a= insertion in journal templates.
@@ -163,11 +165,15 @@ A few words to explain the "jc" template: =:clock-in= property starts timing whe
 
           ("jn" "journal edit the task currently clocked in" plain
            (clock) "%?" :unnarrowed t)
+
+          ("r" "read later" checkitem
+           (file "read-later.org")
+              "[ ] %? ")
 ))
 #+end_src
 
 #+RESULTS:
-| t | Personal t | entry | (file+headline +org-capture-todo-file Inbox) | * TODO [%^{Select the urgency | A | B | C}] %? |
+| (t Personal t entry (file+headline +org-capture-todo-file Inbox) * TODO [%^{Select the urgency | A | B | C}] %? |
 
 *** templates for reference
 Doom provides a list of project-oriented capture templates but I don 't want to use them right now
@@ -560,6 +566,15 @@ export https_proxy="http://127.0.0.1:12333"
   (exwm-enable))
 #+end_src
 * window rule
+#+begin_src emacs-lisp
+(map! :desc "next buffer" :ne "s-j" #'next-buffer)
+(map! :desc "prev buffer" :ne "s-k" #'previous-buffer)
+(map! :desc "other window" :ne "s-o" #'other-window)
+(map! :desc "prev window" :ne "s-O" #'(lambda () (interactive) (other-window -1)))
+#+end_src
+
+#+RESULTS:
+
 #+begin_src emacs-lisp :tangle nil
 (use-package window
   :init

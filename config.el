@@ -49,11 +49,18 @@
 
           ("ja" "Journal arbitrary recording" entry
            (file+olp+datetree +org-capture-journal-file)
-              "* %?\n%u\n%i")
+              "* %?\n%u\n%i" :tree-type week)
 
           ("jc" "journal clock into something new" entry
            (file+olp+datetree +org-capture-journal-file)
-              "* %?" :clock-in t :clock-keep t)
+              "* %?" :clock-in t :clock-keep t :tree-type week)
+
+          ("jn" "journal edit the task currently clocked in" plain
+           (clock) "%?" :unnarrowed t)
+
+          ("r" "read later" checkitem
+           (file (concat org-directory "/read-later.org"))
+              "[ ] %? ")
 ))
 
 (setq org-roam-directory "~/org-roam")
@@ -147,6 +154,11 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
   (setq left-fringe-width 30))
 (add-hook 'nov-mode-hook 'my-nov-font-setup)
 (add-hook 'nov-mode-hook 'enlarge-left-fringe)
+
+(map! :desc "next buffer" :ne "s-j" #'next-buffer)
+(map! :desc "prev buffer" :ne "s-k" #'previous-buffer)
+(map! :desc "other window" :ne "s-o" #'other-window)
+(map! :desc "prev window" :ne "s-O" #'(lambda () (interactive) (other-window -1)))
 
 (defun prot/make-frame-floating-with-current-buffer ()
   (interactive)
