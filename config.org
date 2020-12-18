@@ -173,7 +173,7 @@ A few words to explain the "jc" template: =:clock-in= property starts timing whe
 #+end_src
 
 #+RESULTS:
-| (t Personal t entry (file+headline +org-capture-todo-file Inbox) * TODO [%^{Select the urgency | A | B | C}] %? |
+| t | Personal t | entry | (file+headline +org-capture-todo-file Inbox) | * TODO [%^{Select the urgency | A | B | C}] %? |
 
 *** templates for reference
 Doom provides a list of project-oriented capture templates but I don 't want to use them right now
@@ -412,47 +412,6 @@ The configuration is currently disabled because of its slowliness.
   )
 )
 #+end_src
-* window/buffer management
-** ace-window
-Shortkey for ace-window:
-#+begin_src emacs-lisp
-(map! :desc "ace-window" :ne "SPC v" #'ace-window)
-#+end_src
-
-** monocle-window
-From prot's dotEmacs. Defines a monocole layout similar to Tiling window managers.
-Currently the hyper-key(positioned at right ctrl on my xps-15) is used for window operations inside Emacs.
-In the future I might replace dwm with exwm and the super key can be handled by Emacs in the X11 layer.
-#+begin_src emacs-lisp
-(use-package emacs
-  :config
-  (defvar prot/window-configuration nil
-    "Current window configuration.
-Intended for use by `prot/window-monocle'.")
-
-  (define-minor-mode prot/window-single-toggle
-    "Toggle between multiple windows and single window.
-This is the equivalent of maximising a window.  Tiling window
-managers such as DWM, BSPWM refer to this state as 'monocle'."
-    :lighter " [M]"
-    :global nil
-    (if (one-window-p)
-        (when prot/window-configuration
-          (set-window-configuration prot/window-configuration))
-      (setq prot/window-configuration (current-window-configuration))
-      (delete-other-windows)))
-  :bind ("s-s" . prot/window-single-toggle))
-#+end_src
-
-#+RESULTS:
-: prot/window-single-toggle
-** last-buffer
-#+begin_src emacs-lisp
-(map! :desc "ace-window" :ne "SPC j" #'evil-switch-to-windows-last-buffer)
-#+end_src
-
-#+RESULTS:
-
 * browser
 ** default browser
 #+begin_src emacs-lisp
@@ -566,15 +525,22 @@ export https_proxy="http://127.0.0.1:12333"
   (exwm-enable))
 #+end_src
 * window rule
+** window/buffer switch
 #+begin_src emacs-lisp
+(map! :desc "ace-window" :ne "SPC v" #'ace-window)
 (map! :desc "next buffer" :ne "s-j" #'next-buffer)
 (map! :desc "prev buffer" :ne "s-k" #'previous-buffer)
 (map! :desc "other window" :ne "s-o" #'other-window)
+(map! :desc "kill window and buffer" :ne "s-c" #'(lambda () (interactive)
+                                                   (progn
+                                                     (kill-current-buffer)
+                                                     (+workspace/close-window-or-workspace))))
 (map! :desc "prev window" :ne "s-O" #'(lambda () (interactive) (other-window -1)))
+(map! :desc "ace-window" :ne "SPC j" #'evil-switch-to-windows-last-buffer)
 #+end_src
 
 #+RESULTS:
-
+** window rules
 #+begin_src emacs-lisp :tangle nil
 (use-package window
   :init
@@ -687,6 +653,33 @@ This can be very useful when the space for a compilmentary buffer (e.g. *info*) 
 #+end_src
 
 #+RESULTS:
+** monocle-window
+From prot's dotEmacs. Defines a monocole layout similar to Tiling window managers.
+Currently the hyper-key(positioned at right ctrl on my xps-15) is used for window operations inside Emacs.
+In the future I might replace dwm with exwm and the super key can be handled by Emacs in the X11 layer.
+#+begin_src emacs-lisp
+(use-package emacs
+  :config
+  (defvar prot/window-configuration nil
+    "Current window configuration.
+Intended for use by `prot/window-monocle'.")
+
+  (define-minor-mode prot/window-single-toggle
+    "Toggle between multiple windows and single window.
+This is the equivalent of maximising a window.  Tiling window
+managers such as DWM, BSPWM refer to this state as 'monocle'."
+    :lighter " [M]"
+    :global nil
+    (if (one-window-p)
+        (when prot/window-configuration
+          (set-window-configuration prot/window-configuration))
+      (setq prot/window-configuration (current-window-configuration))
+      (delete-other-windows)))
+  :bind ("s-s" . prot/window-single-toggle))
+#+end_src
+
+#+RESULTS:
+: prot/window-single-toggle
 * miscellaneous
 ** open in external app
 #+begin_src emacs-lisp
