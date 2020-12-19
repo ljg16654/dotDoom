@@ -15,6 +15,12 @@ are the three important ones:
 + `doom-big-font' -- used for `doom-big-font-mode'; use this for
   presentations or streaming.
 
+It seems that the =variable-pitch-font= is mainly intended for the preconfigured =writeroom-mode=.
+But meanwhile, the font size of =doom-font= and the =variable-pitch-font= need to maintain a delicate
+different for visual consistency. Furthermore, non-monospace font can lead to extra stress when line-
+oriented editing is adopted. Based on these two reasons, I current prefer =olivetti-mode= over
+=writeroom-mode= for focused editing.
+
 They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 font string. You generally only need these two:
 #+begin_src  emacs-lisp :tangle nil
