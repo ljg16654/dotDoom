@@ -13,6 +13,9 @@
   :config
   (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
 
+(map! :desc "go to journal file" :ne " C-c j" #'(lambda ()
+                                                  (interactive)
+                                                  (find-file (concat org-directory "/journal.org"))))
 (setq org-roam-directory "~/org-roam")
 (after! org
   (setq org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)"))
