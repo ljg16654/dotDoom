@@ -1,4 +1,4 @@
 # name: boldsymbol
 # key: bs
 # --
-\boldsymbol{$1}
+\boldsymbol{$1}$0

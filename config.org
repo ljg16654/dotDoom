@@ -52,6 +52,7 @@ The package provides good-looking icons before level headings.
 #+end_src
 ** gtd
 #+begin_src emacs-lisp
+(setq org-roam-directory "~/org-roam")
 (after! org
   (setq org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)"))
         org-priority-faces '((?A :foreground "#e45649")
@@ -60,12 +61,11 @@ The package provides good-looking icons before level headings.
         ;; org-latex-minted-options '(("frame" "lines") ("linenos=true"))
         org-journal-file-format "%Y-%m-%d.org"
         org-format-latex-options (plist-put org-format-latex-options :scale 4.0)
-        org-agenda-files (apply #'append
+        org-agenda-files (apply (function append)
 			        (mapcar
 			         (lambda (directory)
 				        (directory-files-recursively directory org-agenda-file-regexp))
-			            '("~/org/")))
-        )
+			            '("~/org/"))))
   (add-to-list 'org-modules 'org-habit)
   )
 
@@ -84,6 +84,14 @@ The package provides good-looking icons before level headings.
 (add-to-list 'image-file-name-extensions "pdf")
 #+end_src
 ** latex
+*** =org-cdlatex-mode=
+#+begin_src emacs-lisp :tangle nil
+(add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+#+end_src
+
+#+RESULTS:
+| t | doom--setq-gcmh-high-cons-threshold-for-org-mode-h | doom--setq-pangu-spacing-real-insert-separtor-for-org-mode-h | er/add-org-mode-expansions | nolinum | org-clock-load | +lookup--init-org-mode-handlers-h | (closure (t) (&rest _) (add-hook 'before-save-hook 'org-encrypt-entries nil t)) | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-fancy-priorities-mode | doom-disable-show-paren-mode-h | doom-disable-show-trailing-whitespace-h | +org-enable-auto-reformat-tables-h | +org-enable-auto-update-cookies-h | +org-make-last-point-visible-h | evil-org-mode | toc-org-enable | embrace-org-mode-hook | org-eldoc-load |
+
 *** remove =org-latex= cache
 #+begin_src emacs-lisp
 (defun org-latex-delete-cache () (interactive)
@@ -157,7 +165,7 @@ A few words to explain the "jc" template: =:clock-in= property starts timing whe
 
           ("ja" "Journal arbitrary recording" entry
            (file+olp+datetree +org-capture-journal-file)
-              "* %?\n%u\n%i" :tree-type week)
+              "* %?\n%U\n%i" :tree-type week)
 
           ("jc" "journal clock into something new" entry
            (file+olp+datetree +org-capture-journal-file)
@@ -251,10 +259,6 @@ From prot's config on Dec 17 2020 :
 | (a Article to write entry (file+headline tasks.org Writing list) * WRITE %^{Title} %^g |
 
 ** org-roam
-*** basic settings
-#+begin_src emacs-lisp
-(setq org-roam-directory "~/org-roam")
-#+end_src
 *** templates
 ***** TODO wrap active region in source clock block
 ***** TODO insert current buffer location like =org-capture=
@@ -524,7 +528,7 @@ export https_proxy="http://127.0.0.1:12333"
 
   (exwm-enable))
 #+end_src
-* window rule
+* window/buffer
 ** window/buffer switch
 #+begin_src emacs-lisp
 (map! :desc "ace-window" :ne "SPC v" #'ace-window)
@@ -762,7 +766,6 @@ Disable line number by default.
 #+begin_src emacs-lisp
 (defun nolinum ()
   (display-line-numbers-mode 0)
-  (olivetti-mode 1)
   )
 
 (defun viper-lisp-mode ()

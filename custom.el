@@ -13,6 +13,7 @@
  '(jdee-db-spec-breakpoint-face-colors (cons "#f0f0f0" "#928374"))
  '(objed-cursor-color "#9d0006")
  '(org-passwords-file "/home/jigang/.pw")
+ '(org-roam-directory "/home/jigang/org-roam/")
  '(pdf-view-midnight-colors (cons "#282828" "#fbf1c7"))
  '(rustic-ansi-faces
    ["#fbf1c7" "#9d0006" "#79740e" "#b57614" "#076678" "#b16286" "#427b58" "#282828"]))

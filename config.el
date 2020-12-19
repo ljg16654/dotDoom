@@ -13,6 +13,7 @@
   :config
   (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
 
+(setq org-roam-directory "~/org-roam")
 (after! org
   (setq org-todo-keywords '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d!)" "CANCELLED(c!)"))
         org-priority-faces '((?A :foreground "#e45649")
@@ -21,12 +22,11 @@
         ;; org-latex-minted-options '(("frame" "lines") ("linenos=true"))
         org-journal-file-format "%Y-%m-%d.org"
         org-format-latex-options (plist-put org-format-latex-options :scale 4.0)
-        org-agenda-files (apply #'append
+        org-agenda-files (apply (function append)
 			        (mapcar
 			         (lambda (directory)
 				        (directory-files-recursively directory org-agenda-file-regexp))
-			            '("~/org/")))
-        )
+			            '("~/org/"))))
   (add-to-list 'org-modules 'org-habit)
   )
 
@@ -49,7 +49,7 @@
 
           ("ja" "Journal arbitrary recording" entry
            (file+olp+datetree +org-capture-journal-file)
-              "* %?\n%u\n%i" :tree-type week)
+              "* %?\n%U\n%i" :tree-type week)
 
           ("jc" "journal clock into something new" entry
            (file+olp+datetree +org-capture-journal-file)
@@ -59,11 +59,9 @@
            (clock) "%?" :unnarrowed t)
 
           ("r" "read later" checkitem
-           (file (concat org-directory "/read-later.org"))
+           (file "read-later.org")
               "[ ] %? ")
 ))
-
-(setq org-roam-directory "~/org-roam")
 
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
@@ -120,7 +118,37 @@
 (map! :desc "goto-home" :ne "SPC d h" #'go-home)
 (map! :desc "peep-dired" :ne "SPC d p" #'peep-dired)
 
+(setq browse-url-browser-function 'browse-url-firefox)
+
+(load-theme 'doom-gruvbox-light t)
+
+(defun my-nov-font-setup ()
+  (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
+                           :height 1.5))
+(defun enlarge-left-fringe ()
+  (setq left-fringe-width 30))
+(add-hook 'nov-mode-hook 'my-nov-font-setup)
+(add-hook 'nov-mode-hook 'enlarge-left-fringe)
+
 (map! :desc "ace-window" :ne "SPC v" #'ace-window)
+(map! :desc "next buffer" :ne "s-j" #'next-buffer)
+(map! :desc "prev buffer" :ne "s-k" #'previous-buffer)
+(map! :desc "other window" :ne "s-o" #'other-window)
+(map! :desc "kill window and buffer" :ne "s-c" #'(lambda () (interactive)
+                                                   (progn
+                                                     (kill-current-buffer)
+                                                     (+workspace/close-window-or-workspace))))
+(map! :desc "prev window" :ne "s-O" #'(lambda () (interactive) (other-window -1)))
+(map! :desc "ace-window" :ne "SPC j" #'evil-switch-to-windows-last-buffer)
+
+(defun prot/make-frame-floating-with-current-buffer ()
+  (interactive)
+  (make-frame '((name . "脱出")
+              (window-system . x)
+              (minibuffer . nil)))
+  (delete-window))
+
+  (map! :desc "make floating frame" :ne "H-f" #'prot/make-frame-floating-with-current-buffer)
 
 (use-package emacs
   :config
@@ -140,34 +168,6 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
       (setq prot/window-configuration (current-window-configuration))
       (delete-other-windows)))
   :bind ("s-s" . prot/window-single-toggle))
-
-(map! :desc "ace-window" :ne "SPC j" #'evil-switch-to-windows-last-buffer)
-
-(setq browse-url-browser-function 'browse-url-firefox)
-
-(load-theme 'doom-gruvbox-light t)
-
-(defun my-nov-font-setup ()
-  (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
-                           :height 1.5))
-(defun enlarge-left-fringe ()
-  (setq left-fringe-width 30))
-(add-hook 'nov-mode-hook 'my-nov-font-setup)
-(add-hook 'nov-mode-hook 'enlarge-left-fringe)
-
-(map! :desc "next buffer" :ne "s-j" #'next-buffer)
-(map! :desc "prev buffer" :ne "s-k" #'previous-buffer)
-(map! :desc "other window" :ne "s-o" #'other-window)
-(map! :desc "prev window" :ne "s-O" #'(lambda () (interactive) (other-window -1)))
-
-(defun prot/make-frame-floating-with-current-buffer ()
-  (interactive)
-  (make-frame '((name . "脱出")
-              (window-system . x)
-              (minibuffer . nil)))
-  (delete-window))
-
-  (map! :desc "make floating frame" :ne "H-f" #'prot/make-frame-floating-with-current-buffer)
 
 (defun xah-open-in-external-app (&optional @fname)
   "Open the current file or dired marked files in external app.
@@ -230,7 +230,6 @@ Version 2019-11-04"
 
 (defun nolinum ()
   (display-line-numbers-mode 0)
-  (olivetti-mode 1)
   )
 
 (defun viper-lisp-mode ()
